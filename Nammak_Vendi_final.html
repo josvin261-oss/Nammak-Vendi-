@@ -1,0 +1,838 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Nammak Vendi</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Sans:wght@500;600;700;800&family=IBM+Plex+Mono:wght@500;600&family=Noto+Sans+Malayalam:wght@600;800&display=swap">
+<style>
+/* layout concept: brutalist card-wall on a warm paper ground; a circular "wheel" carousel revolves the day's numbers and headlines, bottom tab-bar on phones */
+:root{
+  --ink:#15120e; --paper:#fff8ec; --card:#ffffff; --line:#15120e;
+  --brand:#ff5b45; --gold:#ffd23f; --indigo:#3b49df; --mint:#17b978; --sky:#00b4d8; --pink:#ff3f8e; --red:#e8402f;
+  --warn:#ffb703; --bad:#ff3b30; --mu:#5c5346;
+  color-scheme:light;
+}
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0}
+body{
+  background:var(--paper);
+  background-image:radial-gradient(rgba(21,18,14,.14) 1.6px,transparent 1.8px);
+  background-size:22px 22px;
+  color:var(--ink);
+  font:600 15px/1.55 "IBM Plex Sans",system-ui,-apple-system,sans-serif;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-bottom:calc(96px + env(safe-area-inset-bottom,0px));
+}
+h1,h2,h3{font-family:"Archivo Black",system-ui,sans-serif;font-weight:400;letter-spacing:-.01em;text-wrap:balance}
+button,select,input,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.mono{font-family:"IBM Plex Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
+.w{max-width:1180px;margin:0 auto}
+a{color:inherit}
+.hard{border:3px solid var(--line)}
+.shadow{box-shadow:5px 5px 0 var(--line)}
+.shadow:active{box-shadow:1px 1px 0 var(--line)!important;transform:translate(4px,4px)!important}
+
+/* header */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:30;background:var(--paper);border-bottom:3px solid var(--line);padding-block:10px}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:31;background:var(--paper)}
+.nav{display:flex;align-items:center;gap:12px;min-height:46px}
+.brand{display:flex;align-items:center;gap:10px;font-family:"Archivo Black";font-size:19px;letter-spacing:-.01em}
+.mark{width:38px;height:38px;border-radius:11px;background:var(--ink);color:var(--gold);display:grid;place-items:center;font-family:"Noto Sans Malayalam","Archivo Black",sans-serif;font-weight:800;font-size:16px;transform:rotate(-4deg);flex:none;transition:transform .2s}
+.tagline{font-size:11px;font-weight:700;color:var(--mu);letter-spacing:.04em;text-transform:uppercase;margin-left:2px;display:none}
+@media(min-width:620px){.tagline{display:inline}}
+#tabs{margin-left:auto;display:none;gap:4px;background:var(--card);border:3px solid var(--line);border-radius:999px;padding:3px}
+@media(min-width:860px){#tabs{display:flex}}
+.tab{border:0;background:none;padding:8px 13px;border-radius:999px;cursor:pointer;font-weight:800;font-size:12.5px;white-space:nowrap;display:inline-flex;align-items:center;gap:6px;transition:background .15s,color .15s}
+.tab:hover{background:rgba(21,18,14,.08)}
+.tab[aria-selected=true]{background:var(--brand);color:#fff}
+.tab[aria-selected=true]:hover{background:var(--brand)}
+.sndbtn{flex:none}
+
+/* icons */
+.icon{display:inline-flex;width:1em;height:1em;flex:none}
+.icon svg{width:100%;height:100%;display:block}
+
+/* tooltip */
+.tipbubble{position:fixed;z-index:999;max-width:230px;background:var(--ink);color:var(--paper);font-size:11.5px;font-weight:700;line-height:1.4;padding:8px 11px;border-radius:10px;pointer-events:none;opacity:0;transform:translateY(4px);transition:opacity .12s,transform .12s}
+.tipbubble.show{opacity:1;transform:translateY(0)}
+
+/* hero */
+.hero{position:relative;overflow:hidden;border:3px solid var(--line);border-radius:22px;margin-top:18px;background:var(--brand);isolation:isolate}
+.hero .blob{position:absolute;inset:0;background:
+   radial-gradient(60px 60px at 92% 8%, var(--gold) 98%, transparent 100%),
+   radial-gradient(44px 44px at 78% 85%, var(--sky) 98%, transparent 100%),
+   radial-gradient(38px 38px at 6% 80%, var(--mint) 98%, transparent 100%),
+   radial-gradient(30px 30px at 40% 92%, var(--pink) 98%, transparent 100%);
+   opacity:.9;pointer-events:none}
+.hero-in{position:relative;padding:34px 22px 26px}
+.eyebrow{display:inline-flex;align-items:center;gap:6px;background:var(--ink);color:var(--gold);font-weight:800;font-size:11px;letter-spacing:.09em;text-transform:uppercase;padding:6px 12px;border-radius:999px}
+.hero h1{color:var(--paper);font-size:clamp(28px,6vw,46px);line-height:1.02;margin:14px 0 10px;max-width:15em}
+.hero p{color:var(--paper);font-weight:700;font-size:15px;max-width:38em;margin:0 0 20px;opacity:.95}
+.sbox{display:flex;max-width:580px;background:var(--card);border-radius:999px}
+.sbox input{flex:1;min-width:0;background:none;border:0;padding:14px 20px;outline:0;font-weight:700}
+.sbox button{border:0;background:var(--ink);color:var(--gold);border-radius:999px;padding:0 20px;font-weight:800;cursor:pointer;margin:4px}
+.hint{color:var(--paper);font-size:11.5px;font-weight:700;opacity:.85;margin:8px 2px 0}
+
+/* wheel carousel */
+.wheelwrap{margin-top:22px;padding:18px 0 6px}
+.wheelhd{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.wheelhd h2{font-size:15px;color:var(--paper);text-transform:uppercase;letter-spacing:.07em;margin:0}
+.stage{position:relative;height:200px;perspective:1200px;touch-action:pan-y}
+.track{position:absolute;inset:0 0 0 50%}
+.wnav{position:absolute;top:50%;transform:translateY(-50%);z-index:70;width:40px;height:40px;border-radius:50%;background:var(--paper);display:grid;place-items:center;cursor:pointer}
+.wnav svg{width:16px;height:16px}
+.wleft{left:-2px}
+.wright{right:-2px}
+.pod{position:absolute;top:50%;left:0;width:166px;height:166px;margin:-83px 0 0 -83px;border-radius:50%;border:3px solid var(--ink);background:var(--card);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:12px;gap:4px;cursor:pointer;transition:transform .45s cubic-bezier(.2,.8,.2,1),opacity .45s,filter .45s;will-change:transform}
+.podic{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;color:#fff;margin-bottom:1px}
+.podic svg{width:18px;height:18px}
+.pod b{font-family:"Archivo Black";font-size:28px;line-height:1}
+.pod .lb{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.03em;color:var(--mu);max-width:120px}
+.pod .ttl{font-size:11.5px;font-weight:700;line-height:1.25;max-width:122px;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+.dots{display:flex;justify-content:center;gap:6px;margin-top:10px}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--ink);opacity:.25;border:0;padding:0;cursor:pointer}
+.dot[aria-current=true]{opacity:1;width:20px;border-radius:5px}
+
+/* quick tiles */
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin-top:22px}
+.tile{display:flex;flex-direction:column;gap:8px;padding:16px;border-radius:16px;cursor:pointer;color:var(--ink)}
+.tile .ic{width:24px;height:24px}
+.tile b{font-size:14px}
+.tile span{font-size:11px;font-weight:700;opacity:.8}
+
+.hsec{margin-top:30px}
+.hsec-hd{display:flex;align-items:baseline;gap:10px;margin-bottom:12px}
+.hsec-hd h2{font-size:19px;margin:0}
+.hsec-hd a{margin-left:auto;font-size:12.5px;font-weight:800;text-decoration:none;border-bottom:2px solid var(--ink)}
+
+section.page{margin-top:26px}
+.bar{display:flex;flex-wrap:wrap;gap:9px;align-items:center;margin:4px 0 14px}
+.sel{background:var(--card);border-radius:999px;padding:8px 14px;min-width:120px;font-weight:700}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 6px}
+.chip{background:var(--card);border-radius:999px;padding:6px 15px 6px 12px;font-size:13px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.chip .ic{width:14px;height:14px}
+.chip[aria-pressed=true]{background:var(--brand);color:#fff}
+.meta{font-size:12px;font-weight:800;color:var(--mu);margin:14px 0}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px}
+.card{position:relative;background:var(--card);border-radius:18px;padding:17px;display:flex;flex-direction:column;gap:10px;cursor:pointer;overflow:hidden}
+.cardart{position:relative;overflow:hidden;height:124px;border-radius:15px 15px 0 0;margin:-17px -17px 2px;border-bottom:3px solid var(--ink)}
+.cardart img.ph{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.artb{position:absolute;right:10px;bottom:10px;width:34px;height:34px;border-radius:10px;border:2.5px solid var(--ink);display:grid;place-items:center;font-size:17px}
+.nw .cardart{grid-column:1/-1}
+.card,.tile,.btn,.chip,.tab,.logo,.rmcard,.aicard,.postcard{transition:transform .18s cubic-bezier(.2,.9,.3,1.4),box-shadow .18s}
+.card:hover,.rmcard:hover,.aicard:hover,.postcard:hover{transform:translate(-3px,-4px) rotate(-.5deg);box-shadow:9px 9px 0 var(--line)}
+.tile:hover{transform:translateY(-6px) rotate(-2deg);box-shadow:8px 9px 0 var(--line)}
+.btn:hover,.chip:hover{transform:translateY(-2px) scale(1.05)}
+.tab:hover{transform:translateY(-1px) scale(1.06)}
+.card:hover .logo{transform:rotate(-10deg) scale(1.12)}
+.card:hover .cardart svg{transform:scale(1.07)}
+.cardart svg{transition:transform .35s ease}
+.mark:hover{transform:rotate(8deg) scale(1.1)}
+.cur{position:fixed;left:0;top:0;width:34px;height:34px;margin:-17px 0 0 -17px;border:3px solid var(--ink);border-radius:50%;pointer-events:none;z-index:2000;transition:width .18s,height .18s,margin .18s,background .18s,border-color .18s;opacity:0}
+.cur.on{opacity:1}
+.cur.hov{width:58px;height:58px;margin:-29px 0 0 -29px;background:rgba(255,91,69,.22);border-color:var(--brand)}
+.cur.dn{width:20px;height:20px;margin:-10px 0 0 -10px;background:var(--ink)}
+.trl{position:fixed;width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:50%;pointer-events:none;z-index:1999;animation:trl .7s ease-out forwards}
+@keyframes trl{to{transform:translateY(14px) scale(.1);opacity:0}}
+.rip{position:fixed;width:12px;height:12px;margin:-6px 0 0 -6px;border:3px solid var(--brand);border-radius:50%;pointer-events:none;z-index:2000;animation:rip .6s ease-out forwards}
+@keyframes rip{to{transform:scale(9);opacity:0}}
+.cardart>svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+.npform{display:flex;flex-direction:column;gap:10px;background:var(--card);border-radius:18px;padding:16px;margin-bottom:18px}
+.npform h3{margin:0;font-size:16px}
+.npform input,.npform textarea{border-radius:12px;padding:10px 13px;font-weight:600;border:2.5px solid var(--ink);background:var(--paper);width:100%}
+.npform textarea{resize:vertical;font-family:inherit}
+.npform .r2{display:grid;grid-template-columns:1fr 2fr;gap:10px}
+@media(max-width:700px){.npform .r2{grid-template-columns:1fr}}
+.logo{position:relative;overflow:hidden}
+.logo img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#fff;padding:6px;border-radius:50%}
+.hd{display:flex;gap:11px;align-items:center}
+.logo{flex:none;width:42px;height:42px;border-radius:50%;display:grid;place-items:center;color:var(--ink);font-weight:800;font-size:12px}
+.cat-ic{flex:none;width:30px;height:30px;border-radius:9px;display:grid;place-items:center;border:2.5px solid var(--ink)}
+.cat-ic svg{width:16px;height:16px}
+.card h3{margin:0;font-size:15px;line-height:1.3;font-weight:800;font-family:"IBM Plex Sans"}
+.org{font-size:12px;font-weight:700;color:var(--mu)}
+.pills{display:flex;flex-wrap:wrap;gap:6px}
+.pill{font-size:11px;font-weight:800;padding:2px 10px;border-radius:999px;background:#fff;border:2px solid var(--ink)}
+.pill.k{background:var(--gold)}.pill.ok{background:var(--mint);color:#fff}.pill.wn{background:var(--warn)}.pill.er{background:var(--bad);color:#fff}
+.clamp{margin:0;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;color:var(--ink);opacity:.85;font-size:13px}
+.row{display:flex;gap:8px;align-items:center;margin-top:auto;padding-top:4px;flex-wrap:wrap}
+.btn{border-radius:999px;background:#fff;padding:7px 15px;font-weight:800;font-size:13px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+.btn.p{background:var(--brand);color:#fff}
+.btn[aria-pressed=true]{background:var(--ink);color:var(--gold)}
+.empty{padding:50px 0;text-align:center;font-weight:800;grid-column:1/-1;color:var(--mu)}
+
+.news{display:grid;gap:16px}
+.nw{display:grid;grid-template-columns:1fr auto;gap:8px 18px;align-items:center}
+.nw h3{font-size:16px}
+
+.rk{display:grid;gap:14px}
+.rr{display:grid;grid-template-columns:46px 42px 1fr auto;gap:12px;align-items:center;padding:13px 15px;cursor:default}
+.rn{font-size:18px;font-family:"Archivo Black";background:var(--brand);color:#fff;border-radius:10px;text-align:center;padding:5px 0}
+.note{background:var(--card);border-radius:14px;padding:12px 16px;font-weight:700;font-size:13px;margin:0 0 16px;border-left:5px solid var(--indigo)}
+
+.res-sub{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.aicard{background:var(--card);border-radius:18px;padding:18px;display:flex;gap:14px}
+.aicard .ic{width:34px;height:34px;flex:none;color:var(--indigo)}
+.aicard h3{margin:0 0 6px;font-size:15px}
+.aicard p{margin:0 0 8px;font-size:13px;line-height:1.55;opacity:.88}
+
+.rmcard{background:var(--card);border-radius:18px;padding:18px;cursor:pointer}
+.rmcard .ic{width:30px;height:30px;color:var(--indigo)}
+.rmcard h3{margin:10px 0 4px;font-size:16px}
+.rmcard span{font-size:12px;font-weight:700;color:var(--mu)}
+
+.postform{display:flex;flex-direction:column;gap:10px;background:var(--card);border-radius:18px;padding:16px;margin-bottom:18px}
+.postform input,.postform textarea{border-radius:12px;padding:10px 13px;font-weight:600;border:2.5px solid var(--ink);background:var(--paper)}
+.postform textarea{resize:vertical;font-family:inherit}
+.postcard{background:var(--card);border-radius:16px;padding:15px;display:flex;flex-direction:column;gap:7px}
+.postcard .pmeta{font-size:11px;font-weight:800;color:var(--mu)}
+.postcard p{margin:0;font-size:13.5px;line-height:1.55}
+
+footer{margin-top:40px;background:var(--ink);color:var(--paper);border-radius:20px;padding:20px;font-size:12px;font-weight:600;line-height:1.6}
+footer b{color:var(--gold)}
+
+dialog{margin:0;position:fixed;inset:0 0 0 auto;height:100%;max-height:100%;width:min(540px,100%);padding:0;border:0;border-left:3px solid var(--line);background:var(--paper);color:var(--ink);overflow:auto}
+dialog[open]{animation:sl .22s ease}
+@keyframes sl{from{transform:translateX(24px);opacity:0}}
+dialog::backdrop{background:rgba(21,18,14,.55)}
+.dh{display:flex;gap:13px;align-items:flex-start;padding:20px;padding-top:calc(20px + env(safe-area-inset-top,0px));background:var(--gold);border-bottom:3px solid var(--line)}
+.dh h2{margin:0;font-size:19px;line-height:1.25}
+.dx{margin-left:auto;flex:none;width:36px;height:36px;padding:0;justify-content:center;border-radius:50%}
+.db{padding:4px 20px 110px}
+.db h4{display:inline-block;margin:20px 0 8px;font-size:11px;text-transform:uppercase;letter-spacing:.08em;background:var(--ink);color:var(--gold);padding:3px 10px;border-radius:999px}
+.db p{margin:0;font-size:13.5px;line-height:1.6}
+.dd{margin:14px 0 0;padding:11px 13px;border-radius:12px;font-weight:800;background:#fff;font-size:13px;border:2.5px dashed var(--ink)}
+.facts{display:grid;grid-template-columns:1fr 1fr;border-radius:12px;overflow:hidden;background:var(--ink);gap:2px}
+.facts div{background:#fff;padding:9px 11px;overflow-wrap:anywhere;font-weight:700;font-size:12.5px}
+.facts b{display:block;font-size:10px;color:var(--mu);text-transform:uppercase;letter-spacing:.05em}
+.db ol{margin:0;padding-left:18px;font-size:13px}
+.db li{margin:6px 0}
+.df{position:fixed;bottom:0;right:0;left:auto;width:min(540px,100%);display:flex;gap:10px;padding:13px 20px calc(13px + env(safe-area-inset-bottom,0px));background:var(--paper);border-top:3px solid var(--line)}
+.df .p{flex:1;justify-content:center;padding:11px}
+.warn{margin-top:18px;font-size:12px;font-weight:700;border-top:2.5px dotted var(--ink);padding-top:11px;opacity:.85}
+
+@media(max-width:700px){
+  .grid{grid-template-columns:1fr}
+  .rr{grid-template-columns:40px 40px 1fr}
+  .rr .btn{grid-column:2/-1}
+  .nw{grid-template-columns:1fr}
+  .tagline{display:none}
+  #tabsM{position:fixed;left:max(14px,env(safe-area-inset-left,0px));right:max(14px,env(safe-area-inset-right,0px));bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:40;display:flex;gap:2px;background:var(--card);border:3px solid var(--line);border-radius:18px;padding:5px;box-shadow:4px 4px 0 var(--line)}
+  #tabsM .tab{flex:1;flex-direction:column;gap:3px;padding:7px 1px;font-size:9.5px;border-radius:13px}
+  #tabsM .tab .ic{width:16px;height:16px}
+}
+@media(min-width:701px){#tabsM{display:none}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<style>
+/* refinement layer */
+html.fx,html.fx body{cursor:var(--cur-a,auto)}
+html.fx a,html.fx button,html.fx .card,html.fx .tile,html.fx .chip,html.fx .tab,html.fx .pod,html.fx .dot,html.fx select,html.fx summary,html.fx .rmcard,html.fx .btn{cursor:var(--cur-h,pointer)}
+html.fx input,html.fx textarea{cursor:text}
+.glow{position:fixed;left:-110px;top:-110px;width:220px;height:220px;border-radius:50%;pointer-events:none;z-index:1;opacity:0;transition:opacity .3s;background:radial-gradient(circle,rgba(255,91,69,.20),rgba(255,210,63,.10) 45%,transparent 70%);mix-blend-mode:multiply}
+.sp{position:fixed;width:7px;height:7px;margin:-3.5px;border-radius:50%;pointer-events:none;z-index:2000;animation:sp .5s ease-out forwards}
+@keyframes sp{to{transform:translate(var(--dx),var(--dy)) scale(.2);opacity:0}}
+body{font-size:16px;line-height:1.6;background-image:radial-gradient(circle at 6% 10%,rgba(255,91,69,.16),transparent 38%),radial-gradient(circle at 94% 26%,rgba(0,180,216,.14),transparent 36%),radial-gradient(circle at 70% 92%,rgba(255,210,63,.22),transparent 40%),radial-gradient(rgba(21,18,14,.11) 1.6px,transparent 1.8px);background-size:auto,auto,auto,22px 22px;background-attachment:fixed,fixed,fixed,scroll}
+.w{max-width:1240px}
+.grid{grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:24px}
+.card{padding:20px;gap:12px}.cardart{height:160px;margin:-20px -20px 4px}
+.card h3{font-size:17px}.clamp{font-size:14.5px;-webkit-line-clamp:4}.org{font-size:13px}.pill{font-size:12px;padding:3px 11px}
+.btn{font-size:14px;padding:9px 18px}.chip{font-size:14px;padding:8px 17px 8px 14px}.tab{font-size:13.5px;padding:9px 15px}.sel{font-size:14px;padding:10px 16px}
+.logo{width:48px;height:48px}.cat-ic{width:34px;height:34px}
+.card:hover,.rmcard:hover,.aicard:hover,.postcard:hover{transform:translate(-2px,-4px);box-shadow:8px 9px 0 var(--line)}
+.hsec{margin-top:40px}.hsec-hd h2{font-size:24px}.hsec-hd h2::after{content:"";display:block;height:5px;width:48px;background:var(--brand);border-radius:3px;margin-top:6px}
+.tile{padding:22px 18px;min-height:112px}.tile b{font-size:16px}.tile span{font-size:12px}.tile .ic{width:30px;height:30px}
+.hero-in{padding:44px 28px 30px}.hero p{font-size:16.5px}.hero h1{font-size:clamp(30px,5.4vw,52px)}
+.heroart{display:none}
+@media(min-width:980px){.hero-in{padding-right:430px}.heroart{display:block;position:absolute;right:30px;top:36px;width:360px;height:230px}
+.heroart .fr{position:absolute;border:3px solid var(--ink);border-radius:20px;overflow:hidden;box-shadow:6px 6px 0 var(--ink);background:#fff}
+.heroart .fr svg{display:block;width:100%;height:100%}
+.heroart .f1{left:0;top:30px;width:250px;height:160px;transform:rotate(-5deg)}
+.heroart .f2{right:0;top:0;width:210px;height:140px;transform:rotate(4deg)}
+.heroart .f3{right:24px;bottom:-4px;width:190px;height:120px;transform:rotate(-2deg)}}
+.pod b{font-size:30px}.pod .lb{font-size:11px}
+</style>
+<header class="top"><div class="w nav">
+  <div class="brand"><span class="mark" lang="ml">നവ</span><span>Nammak Vendi</span></div>
+  <span class="tagline">Scholarships · Hackathons · Unis · AI watch</span>
+  <button class="wnav sndbtn hard" id="snd" type="button" aria-label="Toggle click sounds" data-tip="Turn click sounds on or off" style="position:static;transform:none;margin-left:auto"></button>
+  <div id="tabs" role="tablist" aria-label="Sections"></div>
+</div></header>
+
+<main class="w">
+<section id="v-home">
+  <div class="hero hard shadow"><div class="blob"></div><div class="hero-in">
+    <p class="eyebrow">Built for Indian students, free forever</p>
+    <h1>Everything you need to get ahead, nammak vendi.</h1>
+    <p>Funded scholarships, hackathons, research seats, free courses and university eligibility — plus the rankings, headlines and AI-in-education news that actually affect you.</p>
+    <div class="sbox hard shadow"><input id="q" type="search" maxlength="80" placeholder="Try: funded PhD abroad, or hackathons for engineers…" aria-label="Search opportunities" data-tip="Type naturally — level, field, funding and location are picked up automatically"><button id="qgo" type="button">Search</button></div>
+    <p class="hint">Smart search: mention a level, field, funding type or "India/abroad" and the filters below fill themselves in.</p>
+  </div>
+  <div class="wheelwrap"><div class="w">
+    <div class="wheelhd"><h2>Today, at a glance — drag or tap through</h2></div>
+    <div class="stage" id="stage">
+      <button class="wnav wleft" id="wprev" type="button" aria-label="Previous" data-tip="Previous highlight"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M15 5l-7 7 7 7"/></svg></button>
+      <div class="track" id="track"></div>
+      <button class="wnav wright" id="wnext" type="button" aria-label="Next" data-tip="Next highlight"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M9 5l7 7-7 7"/></svg></button>
+    </div>
+    <div class="dots" id="dots"></div>
+  </div></div>
+  </div>
+  <div class="tiles" id="tiles"></div>
+  <div class="hsec"><div class="hsec-hd"><h2>Latest headlines</h2><a id="homeNewsMore" href="#">See all news →</a></div><div class="news" id="homeNews"></div></div>
+  <div class="hsec"><div class="hsec-hd"><h2>Internships &amp; fellowships</h2><a id="homeFelMore" href="#">See all →</a></div><div class="grid" id="homeFel"></div></div>
+</section>
+
+<section id="v-opp" class="page" hidden>
+  <div class="bar">
+    <select class="sel hard shadow" id="pl" aria-label="Level" data-tip="Filter by who's eligible: school, undergrad, postgrad or PhD"><option value="">Any level</option><option>School</option><option>UG</option><option>PG</option><option>PhD</option></select>
+    <select class="sel hard shadow" id="pf" aria-label="Field" data-tip="Filter by subject area"><option value="">Any field</option><option>Engineering</option><option>Science</option><option>Computing</option><option>Agriculture</option><option>Humanities</option><option>Management</option></select>
+    <select class="sel hard shadow" id="pr" aria-label="Location" data-tip="India-only or anywhere in the world"><option value="">India &amp; abroad</option><option>India</option><option>Abroad</option></select>
+    <select class="sel hard shadow" id="pm" aria-label="Funding" data-tip="Whether there's a stipend attached, or it's just free"><option value="">Any funding</option><option>Funded</option><option>Free</option><option>Varies</option></select>
+    <select class="sel hard shadow" id="ps" aria-label="Sort" style="margin-left:auto" data-tip="Order results by nearest deadline or alphabetically"><option value="d">Closing soonest</option><option value="t">Title A–Z</option></select>
+  </div>
+  <div class="chips" id="types"></div>
+  <div class="meta" id="count" aria-live="polite"></div>
+  <div class="grid" id="list"></div>
+</section>
+
+<section id="v-uni" class="page" hidden>
+  <div class="bar">
+    <p class="note" style="margin:4px 0;flex:1 1 320px">Entrance route and typical eligibility for each — not every seat follows the same rule, so always check the official admissions page for the current cycle.</p>
+    <button class="btn p hard shadow" id="cmpToggle" type="button" style="margin-left:auto" data-tip="Pick 2-3 universities to compare fees, packages, ROI and admission chances side by side">⚖ Compare universities</button>
+  </div>
+  <div id="cmpPanel" class="postform hard shadow" hidden style="margin-bottom:18px">
+    <div style="font-weight:800;font-size:13px">Pick 2–3 to compare:</div>
+    <div class="chips" id="cmpPicker"></div>
+    <div id="cmpTable" style="overflow-x:auto"></div>
+  </div>
+  <div class="grid" id="ulist"></div>
+</section>
+
+<section id="v-news" class="page" hidden>
+  <div class="bar"><div class="chips" id="ntags"></div></div>
+  <p class="note">Headlines link to the original articles; we summarise in our own words. Always confirm dates on the official site before acting.</p>
+  <div class="news" id="nlist"></div>
+</section>
+
+<section id="v-rank" class="page" hidden>
+  <div class="bar"><div class="chips" id="rtabs"></div></div>
+  <p class="note" id="rnote"></p>
+  <div class="rk" id="rlist"></div>
+</section>
+
+<section id="v-res" class="page" hidden>
+  <div class="res-sub" id="rsub"></div>
+  <div id="r-study"></div>
+  <div id="r-road" hidden></div>
+  <div id="r-ai" hidden></div>
+  <div id="r-comm" hidden></div>
+</section>
+</main>
+
+<footer class="w"><b>Last checked 25 Oct 2026.</b> NIRF 2026 had not been released as of this date — data submission closed in March 2026 and the Ministry has not confirmed a release date, so rankings here use the 2025 list; check nirfindia.org directly. Hackathon and scholarship dates change often — the official site is always the source of truth, and genuine scholarships never charge a fee. Your saves, searches and any notebook posts stay in this browser only; nothing here is sent to a server.</footer>
+
+<dialog id="dlg"></dialog>
+<div id="tabsM" role="tablist" aria-label="Sections"></div>
+
+<script>
+"use strict";
+const NSP="https://scholarships.gov.in/",$=i=>document.getElementById(i),rm=matchMedia("(prefers-reduced-motion:reduce)").matches;
+
+const ICONS={
+cap:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9l10-5 10 5-10 5-10-5Z"/><path d="M6 11v5c0 1.3 2.7 3 6 3s6-1.7 6-3v-5"/><path d="M22 9v6"/></svg>',
+case:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="7.5" width="19" height="12" rx="2"/><path d="M8 7.5V5.5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M2.5 13h19"/></svg>',
+flask:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2v6.3L3.8 18a2 2 0 0 0 1.7 3h13a2 2 0 0 0 1.7-3L15 8.3V2"/><path d="M8 2h8"/><path d="M6.5 15h11"/></svg>',
+book:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4.5A1.5 1.5 0 0 1 5.5 3H12v18H5.5A1.5 1.5 0 0 1 4 19.5v-15Z"/><path d="M20 4.5A1.5 1.5 0 0 0 18.5 3H12v18h6.5a1.5 1.5 0 0 0 1.5-1.5v-15Z"/></svg>',
+trophy:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4h8v5a4 4 0 0 1-8 0V4Z"/><path d="M8 5H4.5A1.5 1.5 0 0 0 3 6.5 3.5 3.5 0 0 0 6.5 10H8"/><path d="M16 5h3.5A1.5 1.5 0 0 1 21 6.5 3.5 3.5 0 0 1 17.5 10H16"/><path d="M10 15v3M14 15v3"/><path d="M8 21h8M9 18h6v3H9z"/></svg>',
+compass:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="M15.5 8.5 13 13l-4.5 2.5L11 11l4.5-2.5Z"/></svg>',
+sparkle:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v4M12 17v4M3 12h4M17 12h4"/><path d="M12 8.2 13.6 11l2.8 1.6-2.8 1.6L12 17l-1.6-2.8L7.6 12.6l2.8-1.6L12 8.2Z"/></svg>',
+library:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V7l4-4 1 18"/><path d="M11 21V5h4v16"/><path d="M17 21l2-15 4 .6-2 15.4"/><path d="M3 21h19"/></svg>',
+bolt:'<svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z"/></svg>',
+clock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="M12 7v5l3.5 2"/></svg>',
+news:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="14" height="16" rx="1.5"/><path d="M17 8h3.5v10A1.5 1.5 0 0 1 19 19.5H8"/><path d="M6.5 7.5h8M6.5 11h8M6.5 14.5h5"/></svg>',
+star:'<svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2.5 15 9l7 1-5.2 5 1.3 7L12 18.7 5.9 22l1.3-7L2 10l7-1 3-6.5Z"/></svg>',
+users:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8.5" cy="8" r="3.2"/><path d="M2.5 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="8.5" r="2.6"/><path d="M15.5 14.3c2.7.5 4.9 2.8 5 5.7"/></svg>',
+globe:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="M2.5 12h19M12 2.5c2.8 2.6 4.3 6 4.3 9.5s-1.5 6.9-4.3 9.5c-2.8-2.6-4.3-6-4.3-9.5S9.2 5.1 12 2.5Z"/></svg>',
+route:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="6" r="2.4"/><circle cx="19" cy="18" r="2.4"/><path d="M5 8.4V13a3 3 0 0 0 3 3h5a3 3 0 0 1 3 3v-.1"/></svg>',
+volumeOn:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5v5h3.5L13 19V5L7.5 9.5H4Z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg>',
+volumeOff:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5v5h3.5L13 19V5L7.5 9.5H4Z"/><path d="M16 9l4.5 6M20.5 9 16 15"/></svg>'
+};
+const CAT_ICON={Scholarship:"cap",Internship:"case",Research:"flask",Hackathon:"trophy",Course:"book",Community:"users"};
+const CAT_COLOR={Scholarship:"var(--gold)",Internship:"var(--pink)",Research:"var(--sky)",Hackathon:"var(--indigo)",Course:"var(--mint)",Community:"var(--red)"};
+function icon(name,cls){const s=h("span","icon "+(cls||""));s.innerHTML=ICONS[name]||"";return s}
+function catIcon(c){const d=h("div","cat-ic");d.style.background=CAT_COLOR[c]||"var(--gold)";d.style.color=/mint|indigo|sky|red/.test(CAT_COLOR[c])?"#fff":"var(--ink)";d.appendChild(icon(CAT_ICON[c]||"compass"));return d}
+let SC=0;const NOPHOTO=["Protest","Podium","Calendar","Classroom","Globe","Survey"];
+const PALS=[["#ff5b45","#ffd23f"],["#e8402f","#ff3f8e"],["#3b49df","#00b4d8"],["#17b978","#00b4d8"],["#ff3f8e","#ffb703"],["#15120e","#ff5b45"],["#ff5b45","#3b49df"],["#e8402f","#ffd23f"]];
+const W='fill="#fff" stroke="#15120e" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"';
+const SCN={
+Scholarship:'<g '+W+'><polygon points="320,62 475,125 320,188 165,125"/><path d="M232,158v52c0 20 40 36 88 36s88-16 88-36v-52l-88 34z"/></g><path d="M475 125v78" stroke="#ffd23f" stroke-width="8" stroke-linecap="round"/><circle cx="475" cy="212" r="12" fill="#ffd23f" stroke="#15120e" stroke-width="4"/>',
+Internship:'<g '+W+'><rect x="205" y="108" width="230" height="130" rx="18"/><path d="M280 108v-26a8 8 0 0 1 8-8h64a8 8 0 0 1 8 8v26" fill="none"/><path d="M205 168h230" fill="none"/></g><rect x="298" y="156" width="44" height="26" rx="6" fill="#ffd23f" stroke="#15120e" stroke-width="5"/>',
+Research:'<g '+W+'><path d="M288 62h64M296 62v62l-62 104a14 14 0 0 0 12 22h148a14 14 0 0 0 12-22l-62-104V62"/></g><path d="M262 190h116l32 54a10 10 0 0 1-9 14H239a10 10 0 0 1-9-14z" fill="#17b978" stroke="#15120e" stroke-width="5" stroke-linejoin="round"/><circle cx="310" cy="212" r="9" fill="#fff"/><circle cx="342" cy="228" r="6" fill="#fff"/><circle cx="330" cy="92" r="7" fill="#fff" stroke="#15120e" stroke-width="3"/>',
+Hackathon:'<g '+W+'><rect x="200" y="80" width="240" height="150" rx="14"/><path d="M175 244h290l-18 20H193z"/></g><rect x="216" y="96" width="208" height="118" rx="6" fill="#15120e"/><text x="320" y="176" text-anchor="middle" font-family="monospace" font-weight="700" font-size="58" fill="#ffd23f">&lt;/&gt;</text>',
+Course:'<g '+W+'><path d="M320 98C270 74 214 78 178 94v138c36-14 92-18 142 6z"/><path d="M320 98c50-24 106-20 142-4v138c-36-14-92-18-142 6z"/><path d="M320 98v140" fill="none"/></g><path d="M205 128c25-8 58-10 90 0M205 156c25-8 58-10 90 0M345 128c32-10 65-8 90 0M345 156c32-10 65-8 90 0" stroke="#15120e" stroke-width="4" fill="none" stroke-linecap="round"/>',
+Community:'<g '+W+'><circle cx="320" cy="108" r="32"/><path d="M252 232c0-44 30-72 68-72s68 28 68 72z"/><circle cx="212" cy="140" r="24"/><path d="M162 232c0-34 22-54 50-54 12 0 22 4 30 10"/><circle cx="428" cy="140" r="24"/><path d="M478 232c0-34-22-54-50-54-12 0-22 4-30 10"/></g>',
+Protest:'<rect x="120" y="252" width="400" height="12" rx="5" fill="#15120e"/><path d="M163 254v-44a27 27 0 0 1 54 0v44z" fill="#15120e" stroke="#15120e" stroke-width="5" stroke-linejoin="round"/><circle cx="190" cy="186" r="18" fill="#fff" stroke="#15120e" stroke-width="5"/><path d="M225 254v-44a27 27 0 0 1 54 0v44z" fill="#fff" stroke="#15120e" stroke-width="5" stroke-linejoin="round"/><circle cx="252" cy="186" r="18" fill="#fff" stroke="#15120e" stroke-width="5"/><path d="M293 254v-44a27 27 0 0 1 54 0v44z" fill="#ffd23f" stroke="#15120e" stroke-width="5" stroke-linejoin="round"/><circle cx="320" cy="186" r="18" fill="#fff" stroke="#15120e" stroke-width="5"/><path d="M361 254v-44a27 27 0 0 1 54 0v44z" fill="#fff" stroke="#15120e" stroke-width="5" stroke-linejoin="round"/><circle cx="388" cy="186" r="18" fill="#fff" stroke="#15120e" stroke-width="5"/><path d="M423 254v-44a27 27 0 0 1 54 0v44z" fill="#15120e" stroke="#15120e" stroke-width="5" stroke-linejoin="round"/><circle cx="450" cy="186" r="18" fill="#fff" stroke="#15120e" stroke-width="5"/><path d="M190 176V96M320 168V88M450 176V112" stroke="#15120e" stroke-width="6" stroke-linecap="round"/><rect x="146" y="62" width="88" height="46" rx="7" fill="#fff" stroke="#15120e" stroke-width="5"/><path d="M162 80h56M162 94h36" stroke="#e8402f" stroke-width="7" stroke-linecap="round"/><rect x="268" y="44" width="104" height="48" rx="7" fill="#ffd23f" stroke="#15120e" stroke-width="5"/><path d="M286 62h68M286 77h44" stroke="#15120e" stroke-width="7" stroke-linecap="round"/><rect x="410" y="80" width="80" height="40" rx="7" fill="#fff" stroke="#15120e" stroke-width="5"/><text x="450" y="112" text-anchor="middle" font-family="Arial Black,Arial,sans-serif" font-weight="900" font-size="34" fill="#e8402f">!</text><path d="M388 212l26-38" stroke="#15120e" stroke-width="7" stroke-linecap="round"/><polygon points="408,160 448,142 448,184 408,170" fill="#ffd23f" stroke="#15120e" stroke-width="5" stroke-linejoin="round"/><path d="M458 150q12 12 0 26M470 140q20 24 0 46" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round"/>',
+Podium:'<g '+W+'><rect x="150" y="196" width="112" height="56"/><rect x="264" y="150" width="112" height="102"/><rect x="378" y="216" width="112" height="36"/></g><g font-family="Arial Black,Arial,sans-serif" font-weight="900" fill="#15120e" text-anchor="middle" font-size="40"><text x="206" y="238">2</text><text x="320" y="214" font-size="54">1</text><text x="434" y="244" font-size="30">3</text></g><path d="M320 62l12 26 28 3-21 19 6 28-25-14-25 14 6-28-21-19 28-3z" fill="#ffd23f" stroke="#15120e" stroke-width="5" stroke-linejoin="round"/>',
+Calendar:'<g '+W+'><rect x="200" y="66" width="240" height="190" rx="18"/></g><rect x="200" y="66" width="240" height="52" rx="18" fill="#e8402f" stroke="#15120e" stroke-width="5"/><circle cx="252" cy="66" r="10" fill="#15120e"/><circle cx="388" cy="66" r="10" fill="#15120e"/><text x="320" y="198" text-anchor="middle" font-family="Arial Black,Arial,sans-serif" font-weight="900" font-size="56" fill="#15120e">31 OCT</text><text x="320" y="234" text-anchor="middle" font-family="Arial,sans-serif" font-weight="800" font-size="22" fill="#e8402f">LAST DATE</text>',
+Classroom:'<g '+W+'><rect x="140" y="62" width="360" height="160" rx="12" fill="#1b5e3a"/><rect x="190" y="232" width="260" height="16" rx="6"/></g><text x="320" y="150" text-anchor="middle" font-family="Arial Black,Arial,sans-serif" font-weight="900" font-size="58" fill="#fff">AI + CLASS</text><path d="M180 188h90M180 202h60" stroke="#ffd23f" stroke-width="5" stroke-linecap="round"/><circle cx="450" cy="190" r="16" fill="#ff5b45" stroke="#fff" stroke-width="4"/>',
+Globe:'<g '+W+'><circle cx="300" cy="158" r="96"/></g><g fill="none" stroke="#15120e" stroke-width="4"><ellipse cx="300" cy="158" rx="42" ry="96"/><path d="M204 158h192M214 114h172M214 202h172"/></g><path d="M470 240V92M436 126l34-34 34 34" fill="none" stroke="#ffd23f" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>',
+Survey:'<g '+W+'><rect x="190" y="180" width="70" height="70"/><rect x="285" y="150" width="70" height="100"/><rect x="380" y="116" width="70" height="134"/></g><text x="320" y="104" text-anchor="middle" font-family="Arial Black,Arial,sans-serif" font-weight="900" font-size="66" fill="#fff" stroke="#15120e" stroke-width="6" paint-order="stroke">82%</text>',
+Uni:'<g '+W+'><polygon points="320,62 470,122 170,122"/><rect x="170" y="122" width="300" height="12"/><rect x="198" y="142" width="34" height="84"/><rect x="262" y="142" width="34" height="84"/><rect x="344" y="142" width="34" height="84"/><rect x="408" y="142" width="34" height="84"/><rect x="170" y="226" width="300" height="22"/></g><circle cx="320" cy="98" r="9" fill="#ffd23f" stroke="#15120e" stroke-width="3"/>',
+AI:'<g '+W+'><rect x="230" y="82" width="180" height="150" rx="22"/></g><g stroke="#15120e" stroke-width="7" stroke-linecap="round"><path d="M270 82V58M320 82V58M370 82V58M270 232v24M320 232v24M370 232v24M230 122h-26M230 157h-26M230 192h-26M410 122h26M410 157h26M410 192h26"/></g><text x="320" y="180" text-anchor="middle" font-family="Archivo Black,Arial Black,sans-serif" font-size="70" fill="#ff5b45" stroke="#15120e" stroke-width="3">AI</text>'};
+function sceneSVG(cat,seed){let n=0;for(const ch of String(seed||cat))n=(n*31+ch.charCodeAt(0))>>>0;const p=PALS[n%PALS.length],id="sg"+(++SC);
+return '<svg viewBox="110 40 420 230" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><linearGradient id="'+id+'" gradientUnits="userSpaceOnUse" x1="-300" y1="-100" x2="940" y2="400"><stop offset="0" stop-color="'+p[0]+'"/><stop offset="1" stop-color="'+p[1]+'"/></linearGradient><pattern id="'+id+'p" width="22" height="22" patternUnits="userSpaceOnUse"><circle cx="3" cy="3" r="1.8" fill="#fff" opacity=".3"/></pattern></defs><rect x="-3000" y="-1500" width="6640" height="3300" fill="url(#'+id+')"/><rect x="-3000" y="-1500" width="6640" height="3300" fill="url(#'+id+'p)"/><circle cx="'+(60+n%90)+'" cy="'+(40+n%60)+'" r="'+(50+n%30)+'" fill="#fff" opacity=".18"/><circle cx="'+(560-n%80)+'" cy="'+(250-n%50)+'" r="'+(60+n%24)+'" fill="#15120e" opacity=".16"/>'+(SCN[cat]||SCN.Community)+'</svg>'}
+Object.assign(CAT_ICON,{Uni:"globe",AI:"sparkle",Protest:"users"});Object.assign(CAT_COLOR,{Uni:"var(--indigo)",AI:"var(--pink)",Protest:"var(--red)"});
+const PHOTO={
+Scholarship:["1523050854058-8df90110c9f1","1522202176988-66273c2fd55f","1454165804606-c3d57bc86b40"],
+Internship:["1521737604893-d14cc237f11d","1552664730-d307ca884978","1573496359142-b8d87734a5a2"],
+Research:["1532094349884-543bc11b234d","1507413245164-6160d8298b31","1485827404703-89b55fcc595e"],
+Hackathon:["1504384308090-c894fdcc538d","1517694712202-14dd9538aa97","1498050108023-c5249f4df085"],
+Course:["1456513080510-7bf3a84b82f8","1481627834876-b7833e8f5570","1488190211105-8b0e65b80b4e"],
+Community:["1531482615713-2afd69097998","1521737604893-d14cc237f11d","1522202176988-66273c2fd55f"],
+Uni:["1562774053-701939374585","1541339907198-e08756dedf3f","1523050854058-8df90110c9f1"],
+AI:["1677442136019-21780ecad995","1485827404703-89b55fcc595e","1526374965328-7f61d4dc18c5"]};
+const PHOTO_OV={cisco:["1550751827-4bd374c3f58b","1526374965328-7f61d4dc18c5"],fcc:["1498050108023-c5249f4df085"],gsoc:["1517694712202-14dd9538aa97"],isro:["1485827404703-89b55fcc595e"],isro2:["1485827404703-89b55fcc595e"]};
+function cardArt(c,key){const d=h("div","cardart"),col=CAT_COLOR[c]||"var(--brand)";d.style.background=col;d.insertAdjacentHTML("afterbegin",sceneSVG(c,key));
+const pool=PHOTO_OV[key]||PHOTO[c]||PHOTO.Community;let n=0;for(const ch of String(key||c))n=(n*31+ch.charCodeAt(0))>>>0;const id=pool[n%pool.length];
+const im=h("img","ph");im.alt="";im.loading="lazy";im.referrerPolicy="no-referrer";
+const srcs=["https://images.unsplash.com/photo-"+id+"?auto=format&fit=crop&w=640&h=300&q=70","https://picsum.photos/seed/"+encodeURIComponent(String(key||c))+"/640/300"];let t=0;
+im.onerror=()=>{t++;if(t<srcs.length)im.src=srcs[t];else im.remove()};im.src=srcs[0];if(!NOPHOTO.includes(c))d.appendChild(im);
+const b=h("span","artb");b.style.background=col;b.style.color=/mint|indigo|sky|red/.test(col)?"#fff":"var(--ink)";b.appendChild(icon(CAT_ICON[c]||"compass"));d.appendChild(b);return d}
+
+const D=[
+{id:"nsp",t:"National Scholarship Portal – central schemes 2026-27",o:"Government of India",c:"Scholarship",l:["School","UG","PG","PhD"],f:["Any"],r:"India",m:"Funded",d:"2026-10-31",u:NSP,s:"One portal for central and centrally sponsored scholarships: post-matric, merit-cum-means, minority, SC/ST/OBC. Needs One-Time Registration (OTR); your institute must digitally verify your application before the window closes, and most schemes pay directly into your Aadhaar-linked bank account.",e:"Varies by scheme: family income ceiling, category certificate and minimum marks. Most schemes require you to be enrolled at a recognised institute and not already holding another central scholarship for the same course."},
+{id:"pragati",t:"AICTE Pragati Scholarship for girls",o:"AICTE",c:"Scholarship",l:["UG"],f:["Engineering","Computing","Management"],r:"India",m:"Funded",d:"2026-10-31",u:NSP,s:"Support for girl students in AICTE-approved technical diploma and degree programmes, worth up to ₹50,000 a year for tuition and incidentals. Applications for 2026-27 are made through NSP, with your institute verifying enrolment.",e:"Girl students with limited family income (typically under ₹8 lakh/year) at an AICTE-approved institution; only two girls per family can claim it."},
+{id:"saksham",t:"AICTE Saksham Scholarship",o:"AICTE",c:"Scholarship",l:["UG"],f:["Engineering","Computing","Management"],r:"India",m:"Funded",d:"2026-10-31",u:NSP,s:"Financial support for specially-abled students in AICTE-approved technical programmes, applied for through NSP and paid in instalments after institute verification.",e:"Disability of 40% or more (with a valid disability certificate) and limited family income."},
+{id:"swanath",t:"AICTE Swanath Scholarship",o:"AICTE",c:"Scholarship",l:["UG"],f:["Engineering","Computing","Management"],r:"India",m:"Funded",d:"2026-10-31",u:NSP,s:"For orphans, wards of armed forces or paramilitary personnel killed in action, and certain other vulnerable categories in AICTE-approved programmes.",e:"See the AICTE notice for the full eligible-category list; a death or service certificate is usually required as proof."},
+{id:"inspire",t:"INSPIRE Scholarship for Higher Education",o:"Dept. of Science & Technology",c:"Scholarship",l:["UG"],f:["Science"],r:"India",m:"Funded",d:null,u:"https://online-inspire.gov.in/",s:"Scholarship and mentoring for top-ranking students pursuing natural and basic sciences at BSc/BS and integrated MSc level, worth ₹80,000 a year plus a summer research grant.",e:"High board percentile (usually top 1%) or a strong JEE/NEET rank, provided you enrol in a basic-science course rather than engineering or medicine."},
+{id:"reliance",t:"Reliance Foundation UG Scholarships",o:"Reliance Foundation",c:"Scholarship",l:["UG"],f:["Any"],r:"India",m:"Funded",d:null,u:"https://www.reliancefoundation.org/",s:"Merit-and-need based support for first-year undergraduates across disciplines, including mentoring alongside the financial award.",e:"Family income limit and merit criteria on the official page; applications usually open once a year around the start of the academic session."},
+{id:"pmrf",t:"Prime Minister's Research Fellowship",o:"Government of India",c:"Research",l:["PhD"],f:["Engineering","Science","Computing"],r:"India",m:"Funded",d:null,u:"https://pmrf.in/",fel:true,s:"PhD fellowship at IITs, IISc and other leading institutions with a monthly stipend rising from about ₹70,000 to ₹80,000 across the programme, plus a research grant.",e:"Strong academic record (top performers from IITs/IISc/NITs/IIITs are directly eligible) and admission to an eligible institute's PhD programme."},
+{id:"jrf",t:"UGC-NET Junior Research Fellowship",o:"UGC / NTA",c:"Research",l:["PG","PhD"],f:["Any"],r:"India",m:"Funded",d:null,u:"https://ugcnet.nta.ac.in/",fel:true,s:"National test for JRF and assistant-professor eligibility, held twice a year. JRF qualifiers receive a research fellowship of roughly ₹37,000 a month for the first two years.",e:"Master's degree with the required aggregate marks (55% general, 50% reserved categories)."},
+{id:"ias",t:"Summer Research Fellowship",o:"Indian Academies of Science",c:"Research",l:["UG","PG"],f:["Science","Engineering"],r:"India",m:"Funded",d:null,u:"https://www.ias.ac.in/",s:"Summer placements with scientists at Indian institutions, run jointly by the three national science academies, with a stipend and travel support. Applications usually open early in the year.",e:"Enrolled BSc, BE/BTech or MSc student with a strong academic record and a short, specific statement of research interest."},
+{id:"wise",t:"DAAD WISE research internships",o:"DAAD",c:"Research",l:["UG"],f:["Science","Engineering"],r:"Abroad",m:"Funded",d:null,u:"https://www.daad.de/",fel:true,s:"Summer research internships at German universities for undergraduates in natural sciences and engineering, with a stipend covering living costs for 2-3 months.",e:"Indian undergraduates in their 3rd year or above, in an eligible subject, nominated through their home institute's DAAD coordinator."},
+{id:"mitacs",t:"Mitacs Globalink Research Internship",o:"Mitacs (Canada)",c:"Research",l:["UG"],f:["Any"],r:"Abroad",m:"Funded",d:null,u:"https://www.mitacs.ca/",fel:true,s:"12-week research placements at Canadian universities with full funding for travel, accommodation and a living stipend — no cost to the student.",e:"Full-time undergraduates from partner countries, including India, usually in their 2nd or 3rd year with a strong GPA."},
+{id:"aicteint",t:"AICTE National Internship Portal",o:"AICTE",c:"Internship",l:["UG","PG"],f:["Any"],r:"India",m:"Varies",d:null,u:"https://internship.aicte-india.org/",s:"Government-run listings of internships from companies and organisations, free for students to browse and apply through, with roles across every branch and sector.",e:"Student at an AICTE-approved institute; eligibility and stipend vary by the individual listing."},
+{id:"pminternship",t:"PM Internship Scheme",o:"Government of India",c:"Internship",l:["UG"],f:["Any"],r:"India",m:"Funded",d:null,u:"https://pminternship.mca.gov.in/",fel:true,s:"A flagship central scheme placing students in 12-month internships at India's top 500 companies, with a monthly stipend of ₹5,000 (₹4,500 from government + ₹500 from the company) plus a one-time grant, aimed at giving real corporate exposure before graduation.",e:"Indian citizen aged 21-24, not employed full-time or enrolled in a full-time degree simultaneously, from a family with no member in a permanent government job or income above ₹8 lakh/year."},
+{id:"microsoft",t:"Microsoft Software & Explore Internships",o:"Microsoft",c:"Internship",l:["UG","PG"],f:["Computing"],r:"Abroad",m:"Funded",d:null,u:"https://careers.microsoft.com/students",s:"Paid summer software-engineering internships (and the earlier-year 'Explore' programme for freshers/sophomores) at Microsoft, with real production work, a mentor and a strong return-offer rate for strong performers.",e:"Current CS/related undergraduate or postgraduate student; online coding assessment followed by technical interviews."},
+{id:"google",t:"Google STEP & Software Engineering Internships",o:"Google",c:"Internship",l:["UG","PG"],f:["Computing"],r:"Abroad",m:"Funded",d:null,u:"https://buildyourfuture.withgoogle.com/internships",s:"Google's STEP programme targets first- and second-year undergraduates new to the field, while the standard SWE internship is open to more experienced students, both fully paid with mentorship and real projects.",e:"Enrolled student pursuing CS or a related technical degree; selection is through an online assessment and interviews."},
+{id:"amazon",t:"Amazon SDE & ML Summer Internships",o:"Amazon",c:"Internship",l:["UG","PG"],f:["Computing"],r:"India",m:"Funded",d:null,u:"https://www.amazon.jobs/en/teams/internships-for-students",s:"Summer software-development and applied-science internships across Amazon's India and global teams, with strong stipends and a well-known path to a full-time pre-placement offer.",e:"Penultimate or final-year engineering student; usually recruited through campus placement cells, with an online test and interview rounds."},
+{id:"goldman",t:"Goldman Sachs Summer Analyst Programme",o:"Goldman Sachs",c:"Internship",l:["UG"],f:["Engineering","Management","Computing"],r:"India",m:"Funded",d:null,u:"https://www.goldmansachs.com/careers/students/",s:"A 6-10 week summer internship across technology, engineering and other divisions at Goldman's Bengaluru and other offices, often converting into a full-time offer for top performers.",e:"Penultimate-year student at a target campus; application includes online assessments, a Superday interview round and strong academic performance."},
+{id:"isro2",t:"ISRO IIRS Outreach & Student Projects",o:"ISRO/IIRS",c:"Research",l:["UG","PG"],f:["Science","Engineering"],r:"India",m:"Varies",d:null,u:"https://www.iirs.gov.in/",s:"Remote-sensing and GIS-focused student training and project opportunities run by ISRO's Indian Institute of Remote Sensing, complementing the main ISRO centre internships with a geospatial-science angle.",e:"Science or engineering students, typically final-year or postgraduate, with an interest in remote sensing, GIS or space applications."},
+{id:"drdo",t:"DRDO Summer Internship & Research Fellowship",o:"DRDO",c:"Internship",l:["UG","PG"],f:["Engineering","Science"],r:"India",m:"Varies",d:null,u:"https://www.drdo.gov.in/",s:"Internships and research fellowships at DRDO's network of defence research labs across India, offering hands-on exposure to applied defence engineering and materials research.",e:"Engineering or science students, usually pre-final or final year, selected per-lab with marks cutoffs and a short research proposal or statement of interest."},
+{id:"adobe",t:"Adobe Internship Programs (India)",o:"Adobe",c:"Internship",l:["UG","PG"],f:["Computing"],r:"India",m:"Funded",d:null,u:"https://www.adobe.com/careers/university.html",s:"Software-engineering and research internships at Adobe's Noida, Bengaluru and other India offices, with strong stipends and a meaningful full-time conversion rate.",e:"Penultimate or final-year CS/engineering student, recruited mainly through campus drives with online assessment and interview rounds."},
+{id:"ignou",t:"CSIR-UGC NET & CSIR Research Internships",o:"CSIR",c:"Research",l:["PG","PhD"],f:["Science"],r:"India",m:"Funded",d:null,u:"https://csirhrdg.res.in/",fel:true,s:"CSIR's network of national labs runs project-linked research fellowships and internships for science postgraduates alongside the CSIR-UGC NET exam, which itself qualifies candidates for JRF.",e:"Master's degree in a relevant science subject with the required aggregate marks; CSIR-UGC NET score needed for the fellowship track."},
+{id:"isro",t:"ISRO student internships and projects",o:"ISRO",c:"Internship",l:["UG","PG"],f:["Engineering","Science","Computing"],r:"India",m:"Varies",d:null,u:"https://www.isro.gov.in/",s:"Short-term internships and final-year project work at ISRO centres, giving direct exposure to satellite, launch-vehicle and remote-sensing work. Check the official site for the current notice and process.",e:"Pre-final or final-year technical students; marks cutoffs (usually 60%+ aggregate) apply, and seats are limited per centre."},
+{id:"gsoc",t:"Google Summer of Code",o:"Google",c:"Internship",l:["UG","PG","PhD"],f:["Computing"],r:"Abroad",m:"Funded",d:null,u:"https://summerofcode.withgoogle.com/",s:"Paid, fully remote open-source projects mentored by real open-source organisations over 12+ weeks, with stipends typically between $1,500 and $6,600 depending on project size and region. Applications open in spring.",e:"18 or older and new to open source; a strong, specific project proposal matters far more than a polished résumé."},
+{id:"fulbright",t:"Fulbright-Nehru Fellowships",o:"USIEF",c:"Scholarship",l:["PG","PhD"],f:["Any"],r:"Abroad",m:"Funded",d:null,u:"https://www.usief.org.in/",fel:true,s:"Fellowships for Indian students and scholars for master's study and research in the United States, covering tuition, living costs and travel in full.",e:"Indian citizen with a bachelor's degree; work experience is required for most tracks, and a clear research or study plan matters in the interview."},
+{id:"chevening",t:"Chevening Scholarships",o:"UK Government",c:"Scholarship",l:["PG"],f:["Any"],r:"Abroad",m:"Funded",d:null,u:"https://www.chevening.org/",fel:true,s:"Fully funded one-year master's degrees in the UK for emerging leaders, covering tuition, a monthly stipend, travel and a dissertation allowance.",e:"Two years of full-time work experience and an undergraduate degree equivalent to a UK 2:1; leadership and networking potential are assessed heavily."},
+{id:"csc",t:"Commonwealth Scholarships",o:"Commonwealth Scholarship Commission",c:"Scholarship",l:["PG","PhD"],f:["Any"],r:"Abroad",m:"Funded",d:null,u:"https://cscuk.fcdo.gov.uk/",fel:true,s:"Funded master's and PhD study in the UK for students from Commonwealth countries, including India, with a strong focus on development-relevant subjects.",e:"Citizen of an eligible country, unable to afford UK study without the award, with a first-class or strong upper-second degree."},
+{id:"inlaks",t:"Inlaks Shivdasani Scholarships",o:"Inlaks Foundation",c:"Scholarship",l:["PG"],f:["Any"],r:"Abroad",m:"Funded",d:null,u:"https://www.inlaksfoundation.org/",fel:true,s:"Support for Indian students admitted to postgraduate programmes at leading universities abroad, covering tuition and living costs up to roughly $100,000 over the course.",e:"Indian citizen under 30 with an unconditional offer from a top-ranked global university; the selection panel interview is the deciding step."},
+{id:"swayam",t:"SWAYAM online courses",o:"Ministry of Education",c:"Course",l:["School","UG","PG"],f:["Any"],r:"India",m:"Free",d:null,u:"https://swayam.gov.in/",s:"Free university-level courses from IITs, IIMs and central universities, many of which can be credit-transferred into your actual degree under UGC rules. Certificates are available for a small proctored-exam fee.",e:"Open to everyone; credit transfer depends on whether your own university has opted into the SWAYAM credit framework."},
+{id:"nptel",t:"NPTEL courses and certification",o:"IITs and IISc",c:"Course",l:["UG","PG"],f:["Engineering","Science","Computing"],r:"India",m:"Free",d:null,u:"https://nptel.ac.in/",s:"Video lectures and notes in engineering, science and humanities from IIT faculty, with optional proctored certification exams that carry real weight with recruiters.",e:"Open to everyone; the certification exam has a modest fee and runs at designated centres a few times a year."},
+{id:"ocw",t:"MIT OpenCourseWare",o:"MIT",c:"Course",l:["UG","PG"],f:["Any"],r:"Abroad",m:"Free",d:null,u:"https://ocw.mit.edu/",s:"Lecture notes, problem sets and exams from thousands of MIT courses, free and without sign-up — the closest thing to actually sitting in an MIT lecture hall.",e:"Open to everyone; no certificate is offered, so it suits self-study rather than a credential."},
+{id:"coursera",t:"Coursera financial aid",o:"Coursera",c:"Course",l:["UG","PG","PhD"],f:["Any"],r:"Abroad",m:"Free",d:null,u:"https://www.coursera.org/financial-aid",s:"Apply for a fee waiver on individual courses and professional certificates if you genuinely cannot afford them — most requests are approved within about two weeks.",e:"Short application per course; you'll explain your financial situation and learning goal in a few sentences."},
+{id:"cisco",t:"Cisco Networking Academy",o:"Cisco",c:"Course",l:["UG","PG"],f:["Computing","Engineering"],r:"Abroad",m:"Free",d:null,u:"https://www.netacad.com/",s:"Free, globally recognised courses in networking, cybersecurity, Python and IoT, built by Cisco and often delivered through partner colleges. Course completion is free; some optional industry certification exams carry a fee.",e:"Open to everyone; some courses run through a registered academy partner institute rather than directly."},
+{id:"harvardx",t:"HarvardX free courses (via edX)",o:"Harvard University",c:"Course",l:["UG","PG"],f:["Any"],r:"Abroad",m:"Free",d:null,u:"https://www.edx.org/school/harvardx",s:"Audit hundreds of real Harvard courses — CS50, statistics, public health, humanities — for free, with the same material Harvard's own students use. A verified certificate is optional and paid; the learning itself costs nothing.",e:"Open to everyone; no application or admission process."},
+{id:"fcc",t:"freeCodeCamp",o:"freeCodeCamp",c:"Course",l:["School","UG","PG"],f:["Computing"],r:"Abroad",m:"Free",d:null,u:"https://www.freecodecamp.org/",s:"A full, project-based coding curriculum covering web development, data analysis with Python and machine learning, with free certifications and genuinely no paywall anywhere on the platform.",e:"Open to everyone."},
+{id:"ggl",t:"Grow with Google / Digital Garage",o:"Google",c:"Course",l:["UG","PG"],f:["Computing","Management"],r:"Abroad",m:"Free",d:null,u:"https://learndigital.withgoogle.com/digitalgarage",s:"Free short courses in digital marketing, data analytics and career skills, each ending in a shareable certificate, aimed squarely at job-readiness rather than deep theory.",e:"Open to everyone."},
+{id:"gla",t:"Great Learning Academy",o:"Great Learning",c:"Course",l:["UG","PG"],f:["Computing","Management"],r:"India",m:"Free",d:null,u:"https://www.mygreatlearning.com/academy",s:"Free Indian-made courses in data science, AI, finance and marketing with certificates — a practical skills layer many students stack on top of their regular degree.",e:"Open to everyone."},
+{id:"diksha",t:"DIKSHA – National Digital Education Platform",o:"NCERT / Ministry of Education",c:"Course",l:["School"],f:["Any"],r:"India",m:"Free",d:null,u:"https://diksha.gov.in/",s:"The government's own platform for NCERT textbooks, explainer videos and QR-linked practice content, mapped directly to state and national school curricula.",e:"Open to every school student; content is organised by board, grade and subject."},
+{id:"epg",t:"e-PG Pathshala",o:"UGC",c:"Course",l:["PG"],f:["Any"],r:"India",m:"Free",d:null,u:"https://epgp.inflibnet.ac.in/",s:"UGC-funded e-content across roughly 70 postgraduate subjects, written by subject experts specifically to match Indian PG curricula rather than a generic syllabus.",e:"Open to everyone, aimed at PG students and researchers."},
+{id:"duo",t:"Duolingo",o:"Duolingo",c:"Course",l:["School","UG","PG"],f:["Humanities"],r:"Abroad",m:"Free",d:null,u:"https://www.duolingo.com/",s:"Free, gamified lessons in over 40 languages — genuinely useful for a study-abroad application, an exchange semester, or keeping a language alive between classes.",e:"Open to everyone."},
+{id:"sih",t:"Smart India Hackathon 2026",o:"Ministry of Education / AICTE",c:"Hackathon",l:["UG","PG"],f:["Engineering","Computing"],r:"India",m:"Funded",d:null,u:"https://www.sih.gov.in/",s:"India's flagship national hackathon, now in its 9th edition. The 2026 cycle launched on 21 August with ministry- and industry-submitted problem statements; institutions ran internal selection hackathons through September to pick their national-round teams, with cash prizes at the final stage.",e:"Teams of up to six, nominated by an AICTE/UGC-recognised institute through its own internal hackathon — individual registration isn't accepted at the national round."},
+{id:"devfolio",t:"Devfolio – live hackathon tracker",o:"Devfolio",c:"Hackathon",l:["UG","PG"],f:["Computing"],r:"Abroad",m:"Varies",d:null,u:"https://devfolio.co/hackathons",s:"The platform most Indian and global student hackathons actually run registration and judging on. Filter by open, upcoming or online-only to see exactly what you can register for right now, rather than relying on a static list that goes stale.",e:"Varies by event; most are open to current students, many with no entry fee."},
+{id:"unstop",t:"Unstop – scholarships, hackathons & case competitions",o:"Unstop",c:"Hackathon",l:["UG","PG"],f:["Any"],r:"India",m:"Varies",d:null,u:"https://unstop.com/",s:"A single live feed of hackathons, coding contests, case-study competitions and scholarships posted directly by companies, colleges and government bodies.",e:"Varies by event; most are open to current students, filterable by college, year and field."},
+{id:"hackerearth",t:"HackerEarth Challenges",o:"HackerEarth",c:"Hackathon",l:["UG","PG"],f:["Computing"],r:"Abroad",m:"Varies",d:null,u:"https://www.hackerearth.com/challenges/",s:"Recruiter-run coding challenges and hackathons, several aimed specifically at students and campus hiring pipelines — a strong leaderboard result often leads straight to an interview.",e:"Varies by event; most are open to current students."},
+{id:"mlh",t:"Major League Hacking season",o:"MLH",c:"Hackathon",l:["UG"],f:["Computing"],r:"Abroad",m:"Varies",d:null,u:"https://mlh.io/seasons",s:"The season calendar for MLH-affiliated student hackathons worldwide, including fully online events that Indian students can join without travel.",e:"Enrolled students, usually 18 or older; many events are beginner-track friendly."},
+{id:"tinkerhub",t:"TinkerHub",o:"TinkerHub Foundation",c:"Community",l:["UG","PG"],f:["Computing","Engineering"],r:"India",m:"Free",d:null,u:"https://tinkerhub.org/",s:"A Kerala-born, campus-led tech community running free hands-on sessions, open-source sprints and build-in-public challenges through student-run chapters across Indian colleges.",e:"Open to any student willing to learn or teach; most activity happens through your campus's own TinkerHub chapter, or you can start one."},
+{id:"fossunited",t:"FOSS United",o:"FOSS United",c:"Community",l:["UG","PG"],f:["Computing"],r:"India",m:"Free",d:null,u:"https://fossunited.org/",s:"A nonprofit growing India's free and open-source software community through local city meetups, the annual FOSS Hack event, and small grants for student-built open-source projects.",e:"Open to anyone interested in open source; most meetups and the Hack event are free and genuinely beginner-friendly."}
+];
+
+const NEWS=[
+{"t": "NSUI protests at the Education Ministry after NEET UG 2026 is cancelled", "s": "Protests", "d": "12 May 2026", "o": "Medical Dialogues", "u": "https://medicaldialogues.in/amp/state-news/delhi/delhi-students-protest-against-neet-2026-cancellation-170461", "x": "Activists of NSUI, the Congress party's student wing, protested outside the Union Education Ministry's headquarters in New Delhi after the National Testing Agency cancelled the NEET UG 2026 exam held on 3 May and said it would be conducted again. The decision followed paper-leak allegations, including a Rajasthan Police probe that found a guess paper closely matching the real questions, and the matter has been referred to the CBI.", "w": "If you sat NEET UG 2026, rely on the NTA's official notice for the re-exam date, not forwarded messages or third-party posts."},
+{"t": "Student groups march on the Education Ministry over exam irregularities; activists detained", "s": "Protests", "d": "1 Jun 2026", "o": "The Week", "u": "https://www.theweek.in/news/india/2026/06/01/several-detained-after-student-bodies-protest-against-exam-issues-we-are-not-scared.amp.html", "x": "AISA and the Krantikari Yuva Sangathan protested outside the Education Ministry in New Delhi over alleged irregularities in recent exams, naming NEET, CUET-UG, SSC and CBSE. They demanded the Education Minister resign; AISA also wants the NTA scrapped, while KYS is asking for a Supreme Court probe. Police detained roughly 8 to 10 AISA activists during the march.", "w": "Exam processes are under heavy public pressure, so keep checking official NTA and ministry notices for any change to how national tests are run."},
+{"t": "Allahabad University students protest fee hike and seat reduction", "s": "Protests", "d": "8 Aug 2026", "o": "The Wire", "u": "https://thewire.in/education/another-cjp-like-protest-at-allahabad-university-over-fee-hike-seats-reduction-talks-end-in-deadlock", "x": "Students at Allahabad University in Prayagraj have been protesting for about a month against a fee increase and a cut in seats. The administration says talks settled the standoff, but students have continued to protest and The Wire describes the negotiations as ending in deadlock.", "w": "Before paying admission fees anywhere, check the official fee notice and the seat count for your course."},
+{"t": "A wave of protests hits NALSAR, NLSIU, IIT Delhi, Jamia and IISER Pune", "s": "Protests", "d": "Aug 2026", "o": "ThePrint", "u": "https://theprint.in/india/nalsar-to-iit-delhi-august-sees-wave-of-protests-at-top-higher-education-institutes-across-india/3029631/", "x": "Students at several leading institutes protested over different issues, including a judicial appearance at a law-school convocation, a student's death, and exam and admission irregularities. The campuses named are NALSAR in Hyderabad, NLSIU in Bengaluru, IIT Delhi, Jamia Millia Islamia in Delhi and IISER Pune. ThePrint notes this followed nationwide demonstrations in July over the NEET-UG 2026 paper leak.", "w": "Each campus issue is different, so check your own college's notices before relying on a single account."},
+{t:"IIT Delhi stays India's top university in QS 2027, climbing to 118th",s:"Rankings",d:"Jun 2026",o:"All India Radio (Education Ministry)",u:"https://newsonair.gov.in/iit-delhi-remains-indias-highest-ranked-institution-in-qs-world-university-rankings-2027/",x:"The Education Ministry says 52 Indian institutions feature in the 2027 edition, with IIT Delhi, IIT Bombay and IIT Madras all inside the global top 200."},
+{t:"India's QS presence grows from 11 institutions in 2015 to 52",s:"Rankings",d:"11 Aug 2026",o:"Business Today",u:"https://businesstoday.in/education/story/52-indian-universities-enter-qs-2027-rankings-up-from-11-a-decade-ago-iit-delhi-leads-548485-2026-08-11",x:"Figures shared in the Lok Sabha show a nearly fivefold rise, with IIT Hyderabad and Jamia Millia Islamia among the biggest improvers."},
+{t:"Non-IIT institutions are climbing in the world rankings",s:"Rankings",d:"Jun 2026",o:"Careers360",u:"https://news.careers360.com/qs-world-university-rankings-2027-iit-delhi-bombay-ranked-highest-iits-du-jnu-mu-improve-globally",x:"Ranked non-IIT institutions have grown from 7 in 2017 to 43 now, and BITS Pilani jumped 93 places to 575th."},
+{t:"NSP 2026-27: most scholarship applications close on 31 October",s:"Scholarships",d:"Oct 2026",o:"Buddy4Study",u:"https://www.buddy4study.com/article/scholarships-gov-in-nsp",x:"The portal opened in June and most schemes close on 31 October. Complete your One-Time Registration and ask your institute to verify your application early."},
+{t:"Smart India Hackathon 2026 is officially underway",s:"Hackathons",d:"21 Aug 2026",o:"AICTE / Reskilll",u:"https://blogs.reskilll.com/smart-india-hackathon-2026-launched-timeline-registration-how-to-participate/",x:"The ninth edition launched in August with problem statements released to institutions; campuses spent September running internal hackathons to pick their national-round teams."},
+{t:"IIT Madras tops NIRF 2025 overall and in engineering",s:"Rankings",d:"NIRF 2025",o:"Dinamalar",u:"https://www.dinamalar.com/news/kalvimalar-news-en/iit-madras-tops-nirf-rankings-for-10th-year-in-a-row-in-engineering-7th-year-overall/57156",x:"IIT Madras holds first place for the seventh year overall and tenth year in engineering, and also topped the Innovation category."},
+{t:"NIRF 2026 still unreleased as of late October",s:"Rankings",d:"Oct 2026",o:"Careers360",u:"https://news.careers360.com/nirf-2026-ranking-date-top-colleges-india-iit-madras-hindu-college-2025-toppers-moe-nirfindia-org-iisc-aiims",x:"Data submission closed in March and the Ministry has still not confirmed a release date, despite several expected windows coming and going since June."},
+{t:"India plans to put AI in classrooms from Class 3",s:"AI & studies",d:"2026-27",o:"The Hindu, via Vision IAS",u:"https://visionias.in/current-affairs/upsc-daily-news-summary/article/2025-10-31/the-hindu/science-and-technology/ais-rewriting-of-the-rules-of-education",x:"The plan extends existing AI electives for senior students down to Class 3, aiming to make basic AI literacy a standard part of the curriculum from the 2026-27 academic year."},
+{t:"Most Indian students worry AI speeds them up but teaches them less",s:"AI & studies",d:"2026",o:"Deccan Chronicle",u:"https://www.deccanchronicle.com/amp/artificial-intelligence/indian-students-worry-ai-prioritising-speed-over-deep-learning-report-1997461",x:"A global HP Futures survey found 82% of Indian students worry that leaning on AI tools for schoolwork comes at the cost of genuinely understanding the material."},
+{t:"Student-led FOSS and tinkering communities are growing fast on campuses",s:"Hackathons",d:"2026",o:"FOSS United / TinkerHub",u:"https://fossunited.org/",x:"Campus chapters of community-run groups like TinkerHub and FOSS United are increasingly where students actually learn to ship real open-source code, outside the formal curriculum."}
+];
+
+const RK={eng:{n:"NIRF Engineering 2025 · India",note:"NIRF Engineering rankings, 2025 edition — the last one released. The 2026 edition had not been published as of 25 Oct 2026; check nirfindia.org for the current list.",src:"https://www.nirfindia.org/",sl:"Open NIRF portal",rows:[[1,"IIT Madras","iitm.ac.in","Top for 10 years running"],[2,"IIT Delhi","iitd.ac.in",""],[3,"IIT Bombay","iitb.ac.in",""],[4,"IIT Kanpur","iitk.ac.in",""],[5,"IIT Kharagpur","iitkgp.ac.in",""],[6,"IIT Roorkee","iitr.ac.in",""],[7,"IIT Hyderabad","iith.ac.in",""],[8,"IIT Guwahati","iitg.ac.in",""]]},
+qs:{n:"QS World Rankings 2027 · Indian institutions",note:"Global ranks from QS 2027. MIT is #1 worldwide; IIT Delhi is India's highest entry at 118th, up five places on the previous year.",src:"https://www.topuniversities.com/world-university-rankings",sl:"Open QS rankings",rows:[[118,"IIT Delhi","iitd.ac.in","Score 65.7"],[134,"IIT Bombay","iitb.ac.in","Score 63.9"],[170,"IIT Madras","iitm.ac.in","Score 59.3"],[205,"IIT Kharagpur","iitkgp.ac.in","Score 55.1"],[221,"IISc Bengaluru","iisc.ac.in",""],[322,"University of Delhi","du.ac.in","Score 43.8"],[335,"IIT Roorkee","iitr.ac.in","Score 42.9"],[349,"IIT Guwahati","iitg.ac.in","Score 41.9"]]}};
+
+const UNI=[
+{id:"iit",n:"Indian Institutes of Technology (IITs)",type:"Government · Engineering",entrance:"JEE Advanced (after qualifying JEE Main)",elig:"Typically among the top ~2,50,000 JEE Main rankers, within the first 75 percentile of your own board in Physics, Chemistry and Maths, and within the IIT age and attempt limits.",about:"India's most selective engineering institutes, 23 campuses strong, known for research depth and placement outcomes more than campus life — the entrance filter is the famous part. Admission is almost entirely rank-based: there's no essay, interview or holistic review, so your JEE Advanced All-India Rank is the whole story.",u:"https://jeeadv.ac.in/",rankref:"IIT Madras, Delhi and Bombay lead most 2025 NIRF and 2027 QS placements among them.",fees:"₹8–10L total (4 yrs, govt-subsidised)",pkg:"₹18–24 LPA avg, ₹50L+ top",roi:"~1.5–2 yrs to recover fees",chance:"Very low (~0.5% of JEE Main aspirants reach a seat)",marks:"Board: 75th percentile · JEE Advanced AIR needed"},
+{id:"nit",n:"National Institutes of Technology (NITs)",type:"Government · Engineering",entrance:"JEE Main",elig:"A competitive JEE Main percentile that varies by branch, specific NIT and category, plus the standard board-exam eligibility (usually 75% aggregate or top 20 percentile).",about:"31 centrally funded technical institutes, roughly one per state, offering strong faculty and labs at a lower entrance bar and much lower fees than most private colleges. A home-state quota at your local NIT often makes admission meaningfully easier than an out-of-state seat.",u:"https://josaa.nic.in/",rankref:"NIT Trichy and NIT Surathkal are the most consistently top-ranked in NIRF Engineering.",fees:"₹5–6L total (4 yrs)",pkg:"₹10–16 LPA avg, ₹40L+ top (CS branches)",roi:"~1–1.5 yrs to recover fees",chance:"Low–moderate (depends heavily on branch & home-state quota)",marks:"Board: 75% aggregate or top 20 percentile · JEE Main percentile"},
+{id:"du",n:"University of Delhi",type:"Government · Multidisciplinary",entrance:"CUET (Common University Entrance Test)",elig:"A qualifying CUET score in the required subjects, then the specific college's own cutoff, which can swing widely by programme and year.",about:"One of India's largest and oldest universities, made up of dozens of affiliated colleges each with its own culture, faculty and cutoffs under one university umbrella. Strongest for humanities, commerce and sciences rather than engineering.",u:"https://admission.uod.ac.in/",rankref:"Ranked 322nd globally in QS 2027, India's highest-ranked university outside the IITs and IISc.",fees:"₹30k–1.5L total (3 yrs, varies by college)",pkg:"₹4–8 LPA avg (varies hugely by course & college)",roi:"Under 1 yr, given low fees",chance:"Moderate (top colleges very competitive, many options overall)",marks:"Board %: varies 85–99% by college/course · CUET score"},
+{id:"iisc",n:"Indian Institute of Science (IISc)",type:"Government · Research",entrance:"KVPY/IAT or JEE Advanced for the undergraduate research programme; GATE for most postgraduate and PhD seats",elig:"Strong board/JEE performance for the 4-year undergraduate research programme; a valid GATE score plus a relevant bachelor's degree for most postgraduate and PhD admissions.",about:"India's top-ranked research institute, built almost entirely around science and engineering research rather than a large undergraduate intake. Best suited if research, not a fast corporate placement, is the goal.",u:"https://iisc.ac.in/admissions/",rankref:"221st in QS 2027, consistently India's most research-intensive institution.",fees:"₹2–3L total (4 yrs, heavily subsidised)",pkg:"₹15–20 LPA avg for research/tech roles; many go to PhD instead",roi:"~1 yr; most value is research exposure, not immediate salary",chance:"Very low (small UG intake, research-first culture)",marks:"JEE Advanced AIR / KVPY-IAT rank · GATE score for PG"},
+{id:"bits",n:"BITS Pilani",type:"Private · Engineering & Sciences",entrance:"BITSAT (own entrance test)",elig:"A competitive BITSAT score decides admission; there's no fixed board-percentage cutoff for selection, but a minimum qualifying mark is needed just to sit the test.",about:"A private deemed university across Pilani, Goa and Hyderabad campuses, known for its flexible dual-degree system and consistently strong campus placements. Fees run far higher than government institutes, so weigh ROI carefully against an NIT.",u:"https://www.bitsadmission.com/",rankref:"Climbed 93 places to 575th in QS 2027 — the steepest rise among ranked Indian institutions this cycle.",fees:"₹20–22L total (4 yrs, private)",pkg:"₹14–18 LPA avg, ₹45L+ top",roi:"~1.5–2.5 yrs to recover fees",chance:"Moderate (score-based, no reservation categories to compete against)",marks:"Board: min 75% with PCM · Strong BITSAT score (~300+/450)"},
+{id:"vit",n:"VIT Vellore",type:"Private · Engineering",entrance:"VITEEE (own entrance test)",elig:"A qualifying VITEEE rank; board marks matter less than the entrance score itself, though a minimum PCM aggregate is required to apply.",about:"One of India's largest private engineering universities, known for industry tie-ups, a large international student base and consistently strong placement drives, though class sizes run large.",u:"https://viteee.vit.ac.in/",rankref:"Regularly placed in NIRF's top 20 engineering institutions nationally.",fees:"₹8–10L total (4 yrs, private)",pkg:"₹6–9 LPA avg, ₹40L+ top (small % of batch)",roi:"~1.5–2 yrs to recover fees",chance:"Moderate–high (large intake across campuses)",marks:"Board: min 60% PCM · VITEEE rank"},
+{id:"mit",n:"Massachusetts Institute of Technology",type:"Private · Global",entrance:"SAT/ACT (test-optional at many cycles) plus essays and recommendations",elig:"Need-blind admission for US applicants and some international ones; demonstrated independent projects and depth in STEM subjects matter more than test scores alone.",about:"Ranked #1 worldwide for the 15th consecutive year in QS 2027 — the benchmark most other rankings measure themselves against. International students should budget for the full cost unless a need-based aid package is granted.",u:"https://mitadmissions.org/",rankref:"#1 globally, QS World University Rankings 2027.",fees:"~$80k/yr (~₹3.3Cr for 4 yrs) before aid; need-based aid can cut this sharply",pkg:"$120k+ avg starting (US tech/finance roles)",roi:"Varies hugely with aid; 2–5 yrs if paying full cost",chance:"Extremely low (~4% acceptance rate for international applicants)",marks:"Top 1% academic profile · strong SAT (1550+) if submitted"},
+{id:"oxbridge",n:"Oxford & Cambridge",type:"Public · Global",entrance:"UCAS application plus a college-specific admissions test and interview",elig:"Top grades in relevant subjects, a strong personal statement, and for most courses a subject-specific written test plus an interview at the college you apply to.",about:"The two oldest English-speaking universities, each organised into semi-independent colleges you apply to alongside the course itself. UK fees for international students are lower than most US private universities but still substantial.",u:"https://www.ucas.com/",rankref:"Both sit inside the global top 5 across the major 2026-27 ranking tables.",fees:"~£35–45k/yr (~₹1.1–1.4Cr for 3 yrs)",pkg:"£45–70k avg starting (UK/global roles)",roi:"~2–3 yrs post-graduation",chance:"Very low (~17–21% overall, lower for competitive courses)",marks:"Near-perfect school grades · admissions test + interview"},
+{id:"nus",n:"National University of Singapore (NUS)",type:"Public · Global",entrance:"Direct application — grades, essays, sometimes an aptitude test",elig:"Strong Class 12 or equivalent grades; competitive for Indian applicants via direct high-school admission, with merit scholarships available for top scorers.",about:"Asia's highest-ranked university, popular with Indian students for its lower cost than the US/UK, strong tech and finance placements, and proximity to India.",u:"https://nus.edu.sg/oam",rankref:"Consistently ranked Asia's #1 and inside the global top 10 of most 2026-27 tables.",fees:"~S$40k/yr (~₹25L/yr; need-based & merit aid common for Indians)",pkg:"S$60–80k avg starting (Singapore tech/finance)",roi:"~2–3 yrs",chance:"Low–moderate (merit-scholarship route is competitive but realistic)",marks:"Strong Class 12 % (90+) · essays/aptitude test"}
+];
+const UNI_IDX={};UNI.forEach(u=>UNI_IDX[u.id]=u);
+const BRAND={"Google":"#4285f4","Microsoft":"#00a4ef","Amazon":"#ff9900","Goldman Sachs":"#6e9ccf","Adobe":"#fa0f00","Cisco":"#049fd9","Harvard University":"#a51c30","MIT":"#a31f34","Massachusetts Institute of Technology":"#a31f34","Duolingo":"#58cc02","Coursera":"#0056d2","freeCodeCamp":"#0a0a23","Great Learning":"#1fa05a","Devfolio":"#3770ff","Unstop":"#1c4980","HackerEarth":"#323754","MLH":"#e73427","ISRO":"#0b3d91","ISRO/IIRS":"#0b3d91","DRDO":"#1b5e20","AICTE":"#e8402f","Government of India":"#ff9933","UGC":"#6a1b9a","CSIR":"#00695c","DAAD":"#00aeef","UK Government":"#012169","Reliance Foundation":"#1565c0","TinkerHub Foundation":"#ff5b45","FOSS United":"#2e7d32","FOSS United / TinkerHub":"#2e7d32","The Hindu, via Vision IAS":"#222","Careers360":"#e8402f","Business Today":"#c62828","Deccan Chronicle":"#b71c1c","Buddy4Study":"#7b1fa2","Dinamalar":"#c62828","All India Radio (Education Ministry)":"#1565c0"};
+const LOGOS={"Google": "<svg viewBox=\"0 0 256 262\" xmlns=\"http://www.w3.org/2000/svg\"><path fill=\"#4285f4\" d=\"M255.878 133.451c0-10.734-.871-18.567-2.756-26.69H130.55v48.448h71.947c-1.45 12.04-9.283 30.172-26.69 42.356l-.244 1.622l38.755 30.023l2.685.268c24.659-22.774 38.875-56.282 38.875-96.027\"/><path fill=\"#34a853\" d=\"M130.55 261.1c35.248 0 64.839-11.605 86.453-31.622l-41.196-31.913c-11.024 7.688-25.82 13.055-45.257 13.055c-34.523 0-63.824-22.773-74.269-54.25l-1.531.13l-40.298 31.187l-.527 1.465C35.393 231.798 79.49 261.1 130.55 261.1\"/><path fill=\"#fbbc05\" d=\"M56.281 156.37c-2.756-8.123-4.351-16.827-4.351-25.82c0-8.994 1.595-17.697 4.206-25.82l-.073-1.73L15.26 71.312l-1.335.635C5.077 89.644 0 109.517 0 130.55s5.077 40.905 13.925 58.602z\"/><path fill=\"#eb4335\" d=\"M130.55 50.479c24.514 0 41.05 10.589 50.479 19.438l36.844-35.974C195.245 12.91 165.798 0 130.55 0C79.49 0 35.393 29.301 13.925 71.947l42.211 32.783c10.59-31.477 39.891-54.251 74.414-54.251\"/></svg>", "Microsoft": "<svg viewBox=\"0 0 256 256\" xmlns=\"http://www.w3.org/2000/svg\"><path fill=\"#f1511b\" d=\"M121.666 121.666H0V0h121.666z\"/><path fill=\"#80cc28\" d=\"M256 121.666H134.335V0H256z\"/><path fill=\"#00adef\" d=\"M121.663 256.002H0V134.336h121.663z\"/><path fill=\"#fbbc09\" d=\"M256 256.002H134.335V134.336H256z\"/></svg>", "Adobe": "<svg viewBox=\"0 0 256 227\" xmlns=\"http://www.w3.org/2000/svg\"><path fill=\"#fa0f00\" d=\"m128.024 83.527l60.288 143.042h-39.513l-18.038-45.554H86.642zM256 0v226.54L161.353 0zM94.684 0L0 226.54V0z\"/></svg>", "Cisco": "<svg viewBox=\"0 0 24 24\" xmlns=\"http://www.w3.org/2000/svg\"><path fill=\"#1BA0D7\" d=\"M16.331 18.171V17.06l-.022.01c-.25.121-.522.19-.801.203a1.186 1.186 0 01-.806-.237 1.038 1.038 0 01-.352-.498 1.21 1.21 0 01-.023-.667c.052-.225.178-.426.357-.569.16-.134.355-.218.562-.242a1.85 1.85 0 011.061.198l.024.013v-1.117l-.051-.014a2.862 2.862 0 00-1.011-.132 2.34 2.34 0 00-.903.206c-.287.132-.54.327-.739.571a2.221 2.221 0 00-.04 2.705c.295.378.709.645 1.175.756.491.12 1.006.102 1.487-.052l.082-.023M5.336 18.171V17.06l-.022.01c-.25.121-.522.19-.801.203a1.183 1.183 0 01-.806-.237 1.03 1.03 0 01-.351-.498 1.202 1.202 0 01-.024-.667c.052-.225.177-.426.357-.569.16-.134.355-.218.562-.242a1.85 1.85 0 011.061.198l.024.013v-1.117l-.051-.014a2.862 2.862 0 00-1.011-.132 2.344 2.344 0 00-.903.206 2.08 2.08 0 00-.74.571 2.224 2.224 0 00-.041 2.705 2.11 2.11 0 001.176.756c.491.12 1.005.102 1.487-.052l.083-.023M9.26 17.249l-.004.957.07.012c.22.041.441.069.664.085.195.019.391.022.587.012.187-.014.372-.049.551-.104.21-.06.405-.163.571-.305a1.16 1.16 0 00.333-.478 1.31 1.31 0 00-.007-.96 1.068 1.068 0 00-.298-.414 1.261 1.261 0 00-.438-.255l-.722-.268a.388.388 0 01-.197-.188.245.245 0 01.008-.219.382.382 0 01.154-.142.798.798 0 01.257-.074c.153-.022.308-.021.46.005.18.02.358.051.533.096l.038.008v-.883l-.069-.015a4.749 4.749 0 00-.543-.097 2.844 2.844 0 00-.714-.003c-.3.027-.585.143-.821.33-.16.126-.281.293-.351.484-.104.29-.105.608 0 .899.054.145.14.274.252.381.097.093.207.173.327.236.157.084.324.149.497.195.057.017.114.035.17.054l.085.031.024.01c.084.03.162.078.226.14.045.042.08.094.101.151a.325.325 0 01.001.161.339.339 0 01-.166.198.856.856 0 01-.275.086 2.032 2.032 0 01-.427.021 5.208 5.208 0 01-.557-.074 9.195 9.195 0 01-.287-.067l-.033-.006zm-2.475.995h1.05v-4.167h-1.05v4.167zm12.162-2.936a1.095 1.095 0 011.541.158 1.094 1.094 0 01-.157 1.541l-.017.014a1.096 1.096 0 01-1.367-1.713m-1.525.854a2.193 2.193 0 002.666 2.107 2.139 2.139 0 00.701-3.937 2.207 2.207 0 00-3.367 1.83M22.961 10.728a.52.52 0 001.039 0V9.573a.52.52 0 00-1.039 0v1.155M20.117 10.728a.522.522 0 001.041 0V8.139a.521.521 0 00-1.04 0v2.589M17.231 11.771a.521.521 0 001.039 0V6.17a.52.52 0 00-1.039 0v5.601M14.393 10.728a.521.521 0 001.04 0V8.139a.52.52 0 00-1.039 0v2.589M11.494 10.728a.522.522 0 001.039 0V9.573a.52.52 0 00-1.039 0v1.155M8.624 10.728a.52.52 0 001.039 0V8.139a.52.52 0 00-1.039 0v2.589M5.737 11.771a.52.52 0 001.039 0V6.17a.52.52 0 00-1.039 0v5.601M2.876 10.728a.522.522 0 001.04 0V8.139a.52.52 0 00-1.039 0v2.589M0 10.728a.521.521 0 001.039 0V9.573a.52.52 0 00-1.039 0v1.155\"/></svg>", "Coursera": "<svg viewBox=\"0 0 24 24\" xmlns=\"http://www.w3.org/2000/svg\"><path fill=\"#0056D2\" d=\"M11.374 23.977c-4.183-.21-8.006-2.626-9.959-6.347-2.097-3.858-1.871-8.864.732-12.454C4.748 1.338 9.497-.698 14.281.23c4.583.857 8.351 4.494 9.358 8.911 1.122 4.344-.423 9.173-3.925 12.04-2.289 1.953-5.295 2.956-8.34 2.797zm7.705-8.05a588.737 588.737 0 0 0-3.171-1.887c-.903 1.483-2.885 2.248-4.57 1.665-2.024-.639-3.394-2.987-2.488-5.134.801-2.009 2.79-2.707 4.357-2.464a4.19 4.19 0 0 1 2.623 1.669c1.077-.631 2.128-1.218 3.173-1.855-2.03-3.118-6.151-4.294-9.656-2.754-3.13 1.423-4.89 4.68-4.388 7.919.54 3.598 3.73 6.486 7.716 6.404a7.664 7.664 0 0 0 6.404-3.563z\"/></svg>", "Duolingo": "<svg viewBox=\"0 0 24 24\" xmlns=\"http://www.w3.org/2000/svg\"><path fill=\"#58CC02\" d=\"M14.484 18.213c1.142 1.033 2.657 1.662 4.316 1.662l.294-.001c1.985-.038 3.749-.976 4.905-2.422v1.98c0 2.522-2.043 4.568-4.567 4.568H4.569C2.045 23.998.002 21.954.002 19.43v-1.92c1.181 1.443 2.976 2.365 4.985 2.365l.35-.001c1.61-.027 3.076-.646 4.191-1.648.555.764 1.456 1.26 2.473 1.26 1.023 0 1.928-.502 2.483-1.273zm-5.349-.996c-.989 1.022-2.375 1.658-3.909 1.658h-.239c-2.229 0-4.146-1.343-4.987-3.262v-7.16c.281-.64.68-1.216 1.169-1.699-.035-.731.132-1.469.511-2.128.256-.44.867-.504 1.21-.124l.766.851c.007-.003.014-.003.021-.005-.098-.78.037-1.587.419-2.308.24-.45.757-.53 1.114-.164 0 0 3.939 3.979 4.035 4.084 1.542 1.348 4.066 1.287 5.686-.18.002-.003.007-.005.009-.007.042-.042 3.855-3.9 3.855-3.9.3361-.3451.8619-.3101 1.113.164.385.724.518 1.535.417 2.32.002.001.003.001.004.002l.007.002c.001 0 .002 0 .003.001l.776-.86c.342-.38.954-.316 1.207.124.387.673.553 1.427.509 2.173.496.501.897 1.099 1.169 1.762v6.941c-.816 1.978-2.761 3.373-5.032 3.373H18.8c-1.547 0-2.945-.648-3.936-1.686a.8386.8386 0 0 0-.009-.067c.313-.017.528-.162.688-.33.152-.16.299-.397.299-.776 0 0-.022-.312-.024-.324.693.767 1.696 1.249 2.811 1.249 2.092 0 3.787-1.696 3.787-3.787v-2.243c0-2.092-1.697-3.787-3.787-3.787-2.093 0-3.787 1.695-3.787 3.787v2.243c0 .266.027.526.079.776-.712-.784-1.744-1.278-2.842-1.278-1.239 0-2.339.523-3.064 1.355.063-.274.097-.56.097-.853v-2.243c0-2.092-1.697-3.787-3.788-3.787-2.09 0-3.787 1.695-3.787 3.787v2.243c0 2.093 1.697 3.787 3.787 3.787 1.151 0 2.182-.513 2.876-1.322-.008.035-.039.395-.039.395 0 .378.147.616.298.775.16.168.374.312.688.331a.7783.7783 0 0 0-.012.097zm.997.073c.729.131 1.733.305 1.792.305h.157c.059 0 1.789-.303 1.789-.303-.327.705-1.041 1.194-1.869 1.194-.829 0-1.543-.49-1.869-1.196zm-.971-1.379c.246-1.313 1.462-2.259 2.918-2.259 1.324 0 2.521.97 2.763 2.259v.105c0 .082-.029.115-.103.106l-2.658.473h-.157l-2.66-.476c-.075.01-.103-.023-.103-.105Zm8.023-6.392c.255-.14.549-.22.861-.22.992 0 1.798.804 1.798 1.798v1.919c0 .991-.804 1.797-1.798 1.797-.991 0-1.797-.803-1.797-1.797v-1.542c.034.003.068.005.103.005.64 0 1.16-.518 1.16-1.156 0-.312-.125-.596-.327-.804zM5.162 9.461c.227-.104.48-.162.746-.162.991 0 1.798.804 1.798 1.798v1.919c0 .991-.804 1.797-1.798 1.797-.991 0-1.797-.803-1.797-1.797v-1.571c.089.022.182.034.278.034.641 0 1.16-.518 1.16-1.156 0-.342-.149-.65-.387-.862ZM.002 6.554V4.568C.002 2.044 2.045 0 4.569 0h14.865c2.522 0 4.565 2.044 4.565 4.568v2.041a5.1847 5.1847 0 0 0-.164-.197 4.8592 4.8592 0 0 0-.646-2.284c-.433-.754-1.315-1.037-2.07-.786a4.785 4.785 0 0 0-.327-.774h-.001c-.287-.54-.758-.835-1.248-.908-.493-.073-1.033.072-1.464.515l-3.82 3.864c-1.226 1.11-3.127 1.199-4.313.205-.103-.109-4.025-4.071-4.025-4.071-.427-.438-.966-.584-1.46-.51-.489.073-.961.367-1.248.907v.002c-.133.25-.241.508-.327.771-.753-.252-1.635.029-2.071.782 0 0-.001.001-.001.002-.4.694-.613 1.459-.645 2.23-.057.065-.113.13-.167.197z\"/></svg>", "freeCodeCamp": "<svg viewBox=\"0 0 24 24\" xmlns=\"http://www.w3.org/2000/svg\"><path fill=\"#0A0A23\" d=\"M19.885 3.906a.621.621 0 00-.354.12c-.08.08-.161.196-.161.313 0 .2.236.474.673.923 1.822 1.754 2.738 3.903 2.732 6.494-.007 2.867-.97 5.17-2.844 6.954-.394.353-.556.63-.557.867 0 .116.08.237.16.353.076.08.237.162.353.162.434 0 1.04-.512 1.833-1.509 1.542-1.89 2.24-3.978 2.279-6.824.036-2.847-.857-4.777-2.603-6.77-.63-.712-1.153-1.082-1.511-1.083zm-15.769.002c-.358 0-.882.37-1.51 1.083C.858 6.984-.035 8.914.001 11.761c.04 2.846.737 4.933 2.28 6.824.791.997 1.398 1.51 1.832 1.509a.573.573 0 00.352-.162c.08-.116.16-.237.16-.353 0-.237-.162-.514-.556-.866-1.873-1.785-2.837-4.087-2.844-6.955-.006-2.591.91-4.74 2.732-6.494.437-.449.674-.722.673-.923 0-.117-.08-.233-.161-.313a.621.621 0 00-.354-.12zm7.056.895s.655 2.081-2.649 6.727c-3.156 4.433 1.045 7.15 1.432 7.386-.281-.18-2.001-1.5.402-5.423.466-.77 1.076-1.47 1.834-3.041 0 0 .67.946.32 2.998-.523 3.101 2.271 2.214 2.314 2.257.976 1.15-.808 3.17-.917 3.233-.108.061 5.096-3.13 1.399-7.935-.253.253-.582 1.442-1.267 1.266-.684-.174 2.125-3.494-2.868-7.468zM9.955 18.916c.023.016.038.024.038.024l-.038-.024z\"/></svg>", "HackerEarth": "<svg viewBox=\"0 0 24 24\" xmlns=\"http://www.w3.org/2000/svg\"><path fill=\"#2C3454\" d=\"M18.447 20.936H5.553V19.66h12.894zM20.973 0H9.511v6.51h.104c.986-1.276 2.206-1.4 3.538-1.306 1.967.117 3.89 1.346 4.017 5.169v7.322c0 .089-.05.177-.138.177h-2.29c-.09 0-.253-.082-.253-.177V10.6c0-1.783-.58-3.115-2.341-3.115-1.282 0-2.637.892-2.637 2.77v7.417c0 .089-.008.072-.102.072h-2.29c-.09 0-.29.022-.29-.072V0H3.178c-.843 0-1.581.673-1.581 1.515v20.996c0 .843.738 1.489 1.58 1.489h17.797c.843 0 1.431-.646 1.431-1.489V1.515c0-.842-.588-1.515-1.43-1.515\"/></svg>", "MLH": "<svg viewBox=\"0 0 24 24\" xmlns=\"http://www.w3.org/2000/svg\"><path fill=\"#265A8F\" d=\"M23.769 6.947c.063 0 .119.02.16.063a.225.225 0 0 1 .071.161v7.778a.213.213 0 0 1-.07.161.222.222 0 0 1-.161.064H22.07a.228.228 0 0 1-.231-.224v-2.715a.206.206 0 0 0-.063-.154c-.042-.042-.091-.056-.162-.056h-2.377a.25.25 0 0 0-.161.056.212.212 0 0 0-.07.154v2.714c0 .147-.078.225-.232.225h-1.683c-.155 0-.232-.078-.232-.225V7.171c0-.147.077-.224.232-.224h1.683c.154 0 .231.077.231.224v2.63c0 .148.078.225.232.225h2.377c.064 0 .12-.021.162-.063a.222.222 0 0 0 .063-.162v-2.63a.21.21 0 0 1 .07-.161.222.222 0 0 1 .161-.063zm-8.374 6.207c.063 0 .119.02.154.063a.222.222 0 0 1 .063.161v1.55a.234.234 0 0 1-.063.161.206.206 0 0 1-.154.064h-5.45c-.154 0-.231-.078-.231-.225V7.171c0-.147.077-.224.231-.224h1.67c.154 0 .23.077.23.224v5.78a.19.19 0 0 0 .07.154c.043.042.099.056.162.056h3.318zm-7.75-6.102c.161.07.301.168.42.288.12.119.21.26.288.42.07.162.105.337.105.52v6.648a.206.206 0 0 1-.063.154.206.206 0 0 1-.154.064H6.649a.181.181 0 0 1-.148-.064.231.231 0 0 1-.056-.154V8.883H5.162v6.045a.231.231 0 0 1-.056.154.191.191 0 0 1-.147.064H3.514a.206.206 0 0 1-.155-.064.206.206 0 0 1-.063-.154V8.883H2.013v6.045c0 .147-.07.218-.218.218H.217c-.147 0-.217-.07-.217-.218V7.164c0-.147.07-.217.217-.217H7.12c.189 0 .357.035.526.105zm16.341 9.314c.007.007.007.014.007.02v.45c0 .028-.007.056-.014.084-.014.028-.028.049-.042.07a.146.146 0 0 1-.07.042c-.028.014-.056.014-.084.014h-.639a.352.352 0 0 1-.084-.014c-.028-.014-.049-.028-.07-.042a.146.146 0 0 1-.042-.07c-.014-.028-.014-.056-.014-.084v-.842c0-.028.007-.056.014-.084.007-.028.028-.05.042-.07a.146.146 0 0 1 .07-.042c.028-.014.056-.014.084-.014h.75c.008 0 .022 0 .022.007.007.007.007.014.007.02v.24c0 .006 0 .02-.007.02-.007.007-.014.007-.021.007h-.603c-.007 0-.021 0-.021.007-.007.007-.007.014-.007.021v.59c0 .007 0 .014.007.02.007.008.014.008.02.008h.358c.007 0 .014 0 .021-.007.007-.007.007-.014.007-.022v-.315c0-.007 0-.021.007-.021.007-.007.014-.007.021-.007h.253c.014 0 .021.007.028.014zm-1.466-.568c.028.014.05.028.07.042a.146.146 0 0 1 .042.07c.014.028.014.056.014.084v1.024c0 .007 0 .021-.007.021-.007.007-.014.007-.02.007h-.253c-.007 0-.014 0-.021-.007-.007-.007-.007-.014-.007-.02v-.892c0-.007 0-.014-.007-.02-.007-.008-.014-.008-.021-.008h-.358c-.007 0-.021 0-.021.007s-.007.014-.007.021v.891c0 .021-.014.035-.035.035h-.253a.034.034 0 0 1-.035-.035v-1.2c0-.02.014-.034.035-.034h.821c.014-.007.042 0 .063.014zM21.3 17.01c0 .021-.014.035-.035.035h-.253a.034.034 0 0 1-.035-.035v-1.2c0-.02.014-.034.035-.034h.253c.02 0 .035.014.035.035zm-.975-.701c-.007.007-.007.007 0 .014l.42.694c.008.007.008.014 0 .021-.006.007-.006.007-.02.007h-.302c-.007 0-.02 0-.028-.007l-.02-.02-.274-.492c-.007-.007-.007-.007-.007 0l-.148.161c-.007.007-.014.015-.014.029-.007.014-.007.02-.007.035v.266c0 .021-.014.035-.035.035h-.245c-.021 0-.035-.014-.035-.035v-1.2c0-.02.014-.034.035-.034h.252c.021 0 .035.014.035.035v.54l.47-.547a.097.097 0 0 1 .028-.021c.014-.007.021-.007.028-.007h.302c.007 0 .014 0 .014.007s0 .014-.007.02zm-1.648-.218c-.007.007-.007.014-.007.021v.59c0 .007 0 .014.007.02.007.008.014.008.02.008h.583c.007 0 .021 0 .021.007.007.007.007.014.007.02v.24c0 .006 0 .02-.007.02-.007.007-.014.007-.021.007h-.722a.352.352 0 0 1-.085-.014.617.617 0 0 1-.07-.042.146.146 0 0 1-.042-.07c-.014-.028-.014-.056-.014-.084v-.849c0-.028.007-.056.014-.084a.538.538 0 0 1 .042-.07.146.146 0 0 1 .07-.042c.028-.014.057-.014.085-.014h.722c.007 0 .021 0 .021.007.007.007.007.014.007.02v.24c0 .006 0 .02-.007.02-.007.007-.014.007-.021.007h-.582c-.007.035-.014.042-.021.042zm-.82-.315c.027 0 .055.007.083.014.028.014.05.028.07.042a.146.146 0 0 1 .043.07.351.351 0 0 1 .014.084v1.024c0 .007 0 .021-.007.021-.007.007-.014.007-.021.007h-.253c-.007 0-.021 0-.021-.007-.007-.007-.007-.014-.007-.02v-.324c0-.007 0-.02-.007-.02-.007-.008-.014-.008-.021-.008h-.358c-.007 0-.02 0-.02.007-.008.007-.008.014-.008.021v.323c0 .021-.014.035-.035.035h-.252c-.021 0-.035-.014-.035-.035v-1.024c0-.028.007-.056.014-.084a.617.617 0 0 1 .042-.07.146.146 0 0 1 .07-.042c.028-.014.056-.014.084-.014zm-.106.603v-.316h-.428v.316zm-1.066-.603c.007 0 .021 0 .021.007.007.007.007.014.007.02v1.2c0 .007 0 .021-.007.021-.007.007-.014.007-.021.007h-.253c-.007 0-.02 0-.02-.007-.008-.007-.008-.014-.008-.02v-.422c0-.007 0-.014-.007-.02-.007-.008-.014-.008-.02-.008h-.358c-.007 0-.021 0-.021.007-.007.007-.007.014-.007.021v.421c0 .021-.014.035-.035.035h-.253a.034.034 0 0 1-.035-.035v-1.2c0-.02.014-.034.035-.034h.253c.02 0 .035.014.035.035v.407c0 .02.014.035.035.035h.357c.007 0 .014 0 .021-.007.007-.007.007-.014.007-.021v-.407c0-.007 0-.021.007-.021.007-.007.014-.007.022-.007h.245zm-1.943.014c.007.007.007.014.007.02v.232c0 .007 0 .014-.007.021-.007.007-.014.007-.02.007h-.604c-.007 0-.007 0-.007.007v.197c0 .007 0 .007.007.007h.52c.006 0 .013 0 .02.007.007.007.007.014.007.02v.183c0 .007 0 .021-.007.021-.007.007-.014.007-.02.007h-.52c-.007 0-.007 0-.007.007v.197c0 .007 0 .007.007.007h.604c.006 0 .02 0 .02.007.007.007.007.014.007.02v.225c0 .007 0 .021-.007.021-.007.007-.014.007-.02.007h-.899a.034.034 0 0 1-.035-.035v-1.199c0-.007 0-.021.007-.021.007-.007.014-.007.021-.007h.898a.132.132 0 0 0 .028.042zm-1.255 0c.007.007.007.014.007.02v1.025a.352.352 0 0 1-.014.084c-.014.028-.028.049-.042.07a.146.146 0 0 1-.07.042c-.028.014-.056.014-.085.014h-.638a.352.352 0 0 1-.084-.014c-.028-.014-.049-.028-.07-.042a.146.146 0 0 1-.042-.07c-.014-.028-.014-.056-.014-.084v-1.024c0-.021.014-.035.035-.035h.252c.021 0 .035.014.035.035v.89c0 .008 0 .015.007.022.007.007.014.007.022.007h.357c.007 0 .014 0 .021-.007.007-.007.007-.014.007-.021v-.891c0-.007 0-.021.007-.021.007-.007.014-.007.021-.007h.253c.02-.007.028 0 .035.007zm-1.333.575c.007.007.007.014.007.02v.45a.352.352 0 0 1-.014.084c-.014.028-.028.049-.042.07a.146.146 0 0 1-.07.042c-.028.014-.056.014-.084.014h-.638a.352.352 0 0 1-.084-.014.478.478 0 0 1-.07-.042.146.146 0 0 1-.043-.07c-.014-.028-.014-.056-.014-.084v-.842c0-.028.007-.056.014-.084.007-.028.028-.05.042-.07a.146.146 0 0 1 .07-.042c.029-.014.057-.014.085-.014h.75c.007 0 .021 0 .021.007.007.007.007.014.007.02v.24c0 .006 0 .02-.007.02-.007.007-.014.007-.02.007h-.604c-.007 0-.021 0-.021.007-.007.007-.007.014-.007.021v.59c0 .007 0 .014.007.02.007.008.014.008.021.008h.358c.007 0 .014 0 .02-.007.008-.007.008-.014.008-.022v-.315c0-.007 0-.021.007-.021.007-.007.014-.007.02-.007h.253c.007 0 .021.007.028.014zm-1.55-.59c.028 0 .056.008.084.015.029.014.05.028.07.042a.146.146 0 0 1 .043.07.352.352 0 0 1 .014.084v1.024c0 .007 0 .021-.007.021-.007.007-.014.007-.021.007h-.26c-.007 0-.02 0-.02-.007-.008-.007-.008-.014-.008-.02v-.324c0-.007 0-.02-.007-.02-.007-.008-.014-.008-.02-.008h-.366c-.007 0-.02 0-.02.007-.008.007-.008.014-.008.021v.323c0 .021-.014.035-.035.035h-.252c-.021 0-.035-.014-.035-.035v-1.024c0-.028.007-.056.014-.084a.617.617 0 0 1 .042-.07.146.146 0 0 1 .07-.042c.028-.014.056-.014.084-.014zm-.112.604v-.316h-.428v.316zm-1.038-.59c.007.008.007.015.007.022v.231c0 .007 0 .014-.007.021-.007.007-.014.007-.02.007H8.83c-.007 0-.007 0-.007.007v.197c0 .007 0 .007.007.007h.519c.007 0 .014 0 .021.007.007.007.007.014.007.02v.183c0 .007 0 .021-.007.021-.007.007-.014.007-.021.007h-.52c-.006 0-.006 0-.006.007v.197c0 .007 0 .007.007.007h.604c.006 0 .02 0 .02.007.007.007.007.014.007.02v.225c0 .007 0 .021-.007.021-.007.007-.014.007-.02.007h-.899a.034.034 0 0 1-.035-.035v-1.199c0-.007 0-.021.007-.021.007-.007.014-.007.021-.007h.898a.132.132 0 0 0 .028.042zm-1.171.948c.007 0 .014 0 .02.007.008.007.008.014.008.02v.24c0 .006 0 .02-.007.02-.007.007-.014.007-.021.007h-.779a.034.034 0 0 1-.035-.035v-1.2c0-.02.014-.034.035-.034h.253c.02 0 .035.014.035.035v.89c0 .007 0 .015.007.022.007.007.014.007.021.007h.463zm-1.704.28c.007.007.007.014 0 .021-.007.007-.007.007-.021.007H6.27c-.007 0-.021 0-.028-.007l-.021-.02-.19-.345c0-.007-.006-.007-.013-.007H5.8c-.007 0-.007 0-.007.007v.337c0 .021-.014.035-.035.035h-.252c-.021 0-.036-.014-.036-.035v-1.2c0-.02.015-.034.036-.034h.82c.028 0 .056.007.084.014.028.014.05.028.07.042a.146.146 0 0 1 .043.07.178.178 0 0 1 .014.084v.477a.21.21 0 0 1-.043.126.23.23 0 0 1-.105.077h-.007c-.007 0-.007.007-.007.014v.007zm-.358-.947h-.435v.309h.435zm-1.241-.294c.028 0 .056.007.084.014.028.014.049.028.07.042a.146.146 0 0 1 .042.07.352.352 0 0 1 .014.084v.842c0 .028-.007.056-.014.084-.014.028-.028.049-.042.07a.146.146 0 0 1-.07.042c-.028.014-.056.014-.084.014h-.64c-.028 0-.056-.007-.084-.014-.028-.014-.049-.028-.07-.042a.146.146 0 0 1-.042-.07c-.014-.028-.014-.056-.014-.084v-.842c0-.028.007-.056.014-.084.007-.028.028-.05.042-.07a.146.146 0 0 1 .07-.042c.028-.014.056-.014.084-.014zm-.113.308H4.44v.653h.427zm-1.03-.294c.006.007.006.014.006.02v1.025c0 .028-.007.056-.014.084-.014.028-.028.049-.042.07a.146.146 0 0 1-.07.042c-.028.014-.056.014-.084.014h-.547a.352.352 0 0 1-.084-.014.538.538 0 0 1-.07-.042.146.146 0 0 1-.042-.07c-.014-.028-.014-.056-.014-.084v-.386c0-.021.014-.035.035-.035h.252c.021 0 .035.014.035.035v.26c0 .007 0 .014.007.02.007.008.014.008.021.008h.26c.007 0 .02 0 .02-.007.008-.007.008-.014.008-.021v-.891c0-.007 0-.021.007-.021.007-.007.014-.007.02-.007h.253c.021-.014.035-.007.042 0zm-1.354-.014c.028 0 .056.007.084.014.028.014.049.028.07.042a.146.146 0 0 1 .042.07.352.352 0 0 1 .014.084v1.024c0 .007 0 .021-.007.021-.007.007-.014.007-.02.007h-.253c-.007 0-.021 0-.021-.007-.007-.007-.007-.014-.007-.02v-.324c0-.007 0-.02-.007-.02-.007-.008-.014-.008-.021-.008h-.358c-.007 0-.021 0-.021.007-.007.007-.007.014-.007.021v.323c0 .021-.014.035-.035.035h-.253a.034.034 0 0 1-.035-.035v-1.024c0-.028.007-.056.014-.084a.617.617 0 0 1 .042-.07.146.146 0 0 1 .07-.042c.028-.014.057-.014.085-.014zm-.112.603v-.316h-.428v.316zm-1.158-.582c.028.014.05.028.07.042a.146.146 0 0 1 .043.07.352.352 0 0 1 .014.084v1.024c0 .007 0 .021-.007.021-.007.007-.014.007-.021.007h-.253c-.007 0-.014 0-.021-.007-.007-.007-.007-.014-.007-.02v-.927H.828v.926c0 .007 0 .021-.007.021-.007.007-.014.007-.021.007H.568c-.007 0-.021 0-.021-.007-.007-.007-.007-.014-.007-.02v-.927H.337v.926c0 .021-.014.035-.035.035H.049a.034.034 0 0 1-.035-.035v-1.2c0-.02.014-.034.035-.034h1.094c.021-.007.05 0 .07.014Z\"/></svg>", "ISRO": "<svg viewBox=\"0 0 24 24\" xmlns=\"http://www.w3.org/2000/svg\"><path fill=\"#F58220\" d=\"M12.5293.5067 5.9449 13.856l4.7616-5.7348 1.8261 15.372ZM5.4597 3.8449l-.528 1.085 1.8526.4203.5185-1.0755Zm2.243.528L7.178 5.4548l1.8526.4202.5146-1.0755Zm6.0003 1.3772-.518 1.0822 1.8499.423.5213-1.0754Zm2.2435.528-.5151 1.079 1.8493.423.5213-1.0755Zm-7.0452 6.6765a2.1418 2.1418 0 0 0-.1954.0096l-.2395.58c.6854-.1159.9826.077 1.2392.7908H.0034L0 14.8366h2.3446v.2819s-.928-.3607-1.7216.3507c-.6196.715-.1017 1.4138-.1017 1.4138s.518-.289 1.3246-.1514c.7507.1346.7117.492.7117.492s-.1015.4428-.705.3576c-.6065-.0918-.5608-.6982-.5608-.6982l-.6688.4423s.2584.4352.8315.5756l.4902.7591h.7637l-.5773-.7439a2.1576 2.1576 0 0 0 .1972-.043c1.459-.3901.948-1.4992-.1345-1.7876-.7507-.1967-1.5708.1706-1.5708.1706s.1114-.9248 1.4494-.705c.7639.1346 1.0297.436 1.0297.436v-1.1505h1.5047l-.6292.2949s.3312.364.436.8297c.1019.4886-.1082.584-.2462.5937-.0752-.0656-.4948-.6462-.4948-.6462l-.2988.2559 1.0528 1.6363h.7281s-.6624-.8261-.7738-.9642c.1672-.0132.4007-.0682.5592-.2722.108.056.2399.1018.3948.1146.4754.0359.7608-.1932.7608-.1932v1.315h.7609v-2.9643H8.502l-.6287.2949s.3312.364.436.8297c.0984.4886-.1113.584-.2524.5937-.0687-.0656-.4954-.6462-.4954-.6462l-.292.2559 1.0399 1.6329h.7342s-.6587-.8227-.7636-.9608c.2425-.0197.6324-.1313.7111-.692.0966-.7273-.2259-1.171-.3462-1.308h.9009v2.9608h.7636v-2.9609h.3966v-.5016h-.5536c-.301-1.0756-.6648-1.3793-1.2511-1.3804Zm4.992.331c-.2213 0-.4129.177-.4129.423 0 .2149.1814.4163.413.4163.2647 0 .4298-.2225.4298-.4163 0-.223-.1729-.423-.4299-.423zm-.7704 1.059v.4954c.9849.0002 1.9698-.0002 2.9547-.0006-.41.0953-.7541.2821-1.0263.561-.1377.1441-.2695.3543-.3875.6427-.0525.115-.0982.2396-.144.3807.8494.0031 1.3867.046 1.6165.1277.1604.0655.3082.1476.4558.2524.1836.1346.2785.2688.3017.4033h-1.7313l-.5902.5937h2.0294c.5935-.4558.8823-.8231.8823-1.115 0-.1346-.0586-.2523-.1604-.3638-.2329-.2294-.548-.384-.9382-.453-.2067-.0328-.5704-.0553-1.0817-.0553a7.5038 7.5038 0 0 0 .2164-.335c.1014-.131.2067-.1931.305-.1931.2722 0 .7084.1671 1.315.505l.5964-.6a5.6666 5.6666 0 0 0-.6818-.3513L24 14.84v-.4954zm-7.0272.492v.8654s.0034.2297-.4558.4626c-.2002.1038-.403.1448-.5761.157a1.078 1.078 0 0 0 .0384-.1768c.0941-.7279-.232-1.1714-.353-1.3082zm7.4277.4067v2.5508h.7309v-2.5508zm4.5509.0028v2.5514h.7348v-1.738c.1967-.0852.3902-.1249.5869-.1249.2067 0 .364.0497.479.1576.1473.1574.2125.3968.1898.7315l.6134-.6032c.0197-.315-.0494-.5581-.2163-.7185-.128-.125-.2889-.1966-.4886-.1966-.1936 0-.4068.0652-.6428.1932-.2067.1049-.3806.2294-.5214.3801v-.6326zm2.9908.0006v1.8984s.0131.3734.249.5473c.174.1146.4068.105.4068.105h1.9837v-1.8656c0-.3325-.1855-.6851-.5411-.6851zm1.7894.6642c.1882.0023.1678.0486.1678.3553v.849l-1.141-.0034s-.1081.0137-.1378-.026c-.0359-.0459-.0198-.0983-.0198-.3474v-.8263c.377.0002 1.1308-.0011 1.1308-.0011z\"/></svg>", "ISRO/IIRS": "<svg viewBox=\"0 0 24 24\" xmlns=\"http://www.w3.org/2000/svg\"><path fill=\"#F58220\" d=\"M12.5293.5067 5.9449 13.856l4.7616-5.7348 1.8261 15.372ZM5.4597 3.8449l-.528 1.085 1.8526.4203.5185-1.0755Zm2.243.528L7.178 5.4548l1.8526.4202.5146-1.0755Zm6.0003 1.3772-.518 1.0822 1.8499.423.5213-1.0754Zm2.2435.528-.5151 1.079 1.8493.423.5213-1.0755Zm-7.0452 6.6765a2.1418 2.1418 0 0 0-.1954.0096l-.2395.58c.6854-.1159.9826.077 1.2392.7908H.0034L0 14.8366h2.3446v.2819s-.928-.3607-1.7216.3507c-.6196.715-.1017 1.4138-.1017 1.4138s.518-.289 1.3246-.1514c.7507.1346.7117.492.7117.492s-.1015.4428-.705.3576c-.6065-.0918-.5608-.6982-.5608-.6982l-.6688.4423s.2584.4352.8315.5756l.4902.7591h.7637l-.5773-.7439a2.1576 2.1576 0 0 0 .1972-.043c1.459-.3901.948-1.4992-.1345-1.7876-.7507-.1967-1.5708.1706-1.5708.1706s.1114-.9248 1.4494-.705c.7639.1346 1.0297.436 1.0297.436v-1.1505h1.5047l-.6292.2949s.3312.364.436.8297c.1019.4886-.1082.584-.2462.5937-.0752-.0656-.4948-.6462-.4948-.6462l-.2988.2559 1.0528 1.6363h.7281s-.6624-.8261-.7738-.9642c.1672-.0132.4007-.0682.5592-.2722.108.056.2399.1018.3948.1146.4754.0359.7608-.1932.7608-.1932v1.315h.7609v-2.9643H8.502l-.6287.2949s.3312.364.436.8297c.0984.4886-.1113.584-.2524.5937-.0687-.0656-.4954-.6462-.4954-.6462l-.292.2559 1.0399 1.6329h.7342s-.6587-.8227-.7636-.9608c.2425-.0197.6324-.1313.7111-.692.0966-.7273-.2259-1.171-.3462-1.308h.9009v2.9608h.7636v-2.9609h.3966v-.5016h-.5536c-.301-1.0756-.6648-1.3793-1.2511-1.3804Zm4.992.331c-.2213 0-.4129.177-.4129.423 0 .2149.1814.4163.413.4163.2647 0 .4298-.2225.4298-.4163 0-.223-.1729-.423-.4299-.423zm-.7704 1.059v.4954c.9849.0002 1.9698-.0002 2.9547-.0006-.41.0953-.7541.2821-1.0263.561-.1377.1441-.2695.3543-.3875.6427-.0525.115-.0982.2396-.144.3807.8494.0031 1.3867.046 1.6165.1277.1604.0655.3082.1476.4558.2524.1836.1346.2785.2688.3017.4033h-1.7313l-.5902.5937h2.0294c.5935-.4558.8823-.8231.8823-1.115 0-.1346-.0586-.2523-.1604-.3638-.2329-.2294-.548-.384-.9382-.453-.2067-.0328-.5704-.0553-1.0817-.0553a7.5038 7.5038 0 0 0 .2164-.335c.1014-.131.2067-.1931.305-.1931.2722 0 .7084.1671 1.315.505l.5964-.6a5.6666 5.6666 0 0 0-.6818-.3513L24 14.84v-.4954zm-7.0272.492v.8654s.0034.2297-.4558.4626c-.2002.1038-.403.1448-.5761.157a1.078 1.078 0 0 0 .0384-.1768c.0941-.7279-.232-1.1714-.353-1.3082zm7.4277.4067v2.5508h.7309v-2.5508zm4.5509.0028v2.5514h.7348v-1.738c.1967-.0852.3902-.1249.5869-.1249.2067 0 .364.0497.479.1576.1473.1574.2125.3968.1898.7315l.6134-.6032c.0197-.315-.0494-.5581-.2163-.7185-.128-.125-.2889-.1966-.4886-.1966-.1936 0-.4068.0652-.6428.1932-.2067.1049-.3806.2294-.5214.3801v-.6326zm2.9908.0006v1.8984s.0131.3734.249.5473c.174.1146.4068.105.4068.105h1.9837v-1.8656c0-.3325-.1855-.6851-.5411-.6851zm1.7894.6642c.1882.0023.1678.0486.1678.3553v.849l-1.141-.0034s-.1081.0137-.1378-.026c-.0359-.0459-.0198-.0983-.0198-.3474v-.8263c.377.0002 1.1308-.0011 1.1308-.0011z\"/></svg>", "Goldman Sachs": "<svg viewBox=\"0 0 24 24\" xmlns=\"http://www.w3.org/2000/svg\"><path fill=\"#7399C6\" d=\"M1.963 9.264h1.452v2.378c-.484.098-.855.148-1.262.148C.561 11.79 0 10.878 0 9.377c0-1.614.778-2.526 2.329-2.526.196 0 .567.014 1.03.084v1.522h-.336l-.19-.582c-.183-.553-.4-.827-.744-.827-.596 0-.912.806-.912 2.315 0 1.515.126 2.23.904 2.23.106 0 .231-.014.351-.048V9.776l-.469-.323v-.189Zm1.424 6.382c0 .954-.651 1.501-1.802 1.501-.315 0-.778-.048-1.213-.119v-1.865h.337l.14.441c.315 1.017.54 1.353.94 1.353.421 0 .722-.371.722-.862 0-.399-.189-.68-.595-.898l-.702-.378c-.541-.287-.835-.736-.835-1.283 0-.828.68-1.326 1.796-1.326.252 0 .547.022 1.016.085v1.521h-.337l-.188-.581c-.19-.618-.393-.842-.764-.842-.415 0-.66.266-.66.652 0 .343.19.589.561.799l.708.399c.596.337.876.786.876 1.403Zm3.101 1.102.14.211v.106H5.556l-.05-.407c-.112.308-.407.491-.786.491-.561 0-.912-.351-.912-.926 0-.561.315-.933 1.283-1.311l.414-.161v-.525c0-.463-.085-.652-.344-.652-.21 0-.329.112-.533.623l-.231.573h-.315v-1.144c.414-.126.828-.21 1.185-.21.792 0 1.221.378 1.221 1.066v2.266Zm.405-6.824c0 1.192-.637 1.866-1.459 1.866-.82 0-1.457-.674-1.457-1.866 0-1.193.637-1.866 1.459-1.866.82 0 1.457.673 1.457 1.866Zm-1.387 6.235v-1.213l-.133.056c-.414.169-.569.547-.569 1.101 0 .414.099.652.329.652.231 0 .373-.225.373-.596Zm.357-6.235c0-1.347-.112-1.704-.427-1.704s-.428.357-.428 1.704c0 1.346.113 1.704.428 1.704s.427-.358.427-1.704Zm3.521 6.269.126.064c-.224.646-.511.89-1.066.89-.904 0-1.409-.679-1.409-1.865 0-1.185.589-1.866 1.55-1.866.258 0 .603.042.897.16v1.193h-.329l-.132-.449c-.176-.596-.273-.75-.449-.75-.281 0-.505.365-.505 1.754 0 1.114.168 1.521.595 1.521.287.001.532-.181.722-.652Zm-.779-4.488H7.342v-.104l.141-.211V7.476l-.141-.21V7.16l1.123-.084v4.313l.14.211v.105Zm1.726.085c-.772 0-1.235-.702-1.235-1.901 0-1.192.483-1.83 1.227-1.83.379 0 .589.147.68.441V7.476l-.141-.21V7.16l1.123-.084v4.313l.14.211v.104h-.996l-.077-.533c-.111.457-.321.619-.721.619Zm2.461 4.958.14.211v.106H11.67v-.106l.14-.211v-2.525c0-.301-.091-.483-.309-.483-.26 0-.449.218-.449.645v2.363l.141.211v.106H9.93v-.106l.14-.211v-3.914l-.14-.21v-.105l1.122-.084v1.451c.127-.301.414-.469.82-.469.576 0 .919.365.919 1.073v2.258h.001Zm-2.664-6.846c0 1.263.112 1.648.421 1.648.385 0 .455-.554.455-1.662 0-1.073-.077-1.606-.449-1.606-.315 0-.427.379-.427 1.62Zm7.041 1.487.14.211v.104h-1.262V11.6l.14-.211V8.787c0-.252-.084-.407-.281-.407-.244 0-.441.219-.441.638v2.371l.14.211v.104h-1.262V11.6l.14-.211V8.787c0-.252-.084-.407-.28-.407-.245 0-.442.219-.442.638v2.371l.141.211v.104h-1.263V11.6l.14-.211V8.535l-.14-.169v-.104l1.01-.12h.084l.028.393c.119-.309.414-.477.814-.477.427 0 .708.21.834.589.105-.365.435-.589.856-.589.553 0 .904.365.904 1.072v2.259Zm-1.311 4.644c0 .609-.393 1.114-1.339 1.114-.245 0-.575-.028-1.087-.119v-1.304h.287l.091.281c.224.715.441.982.785.982.323 0 .533-.232.533-.59 0-.294-.147-.497-.497-.687l-.603-.323c-.385-.21-.596-.539-.596-.946 0-.638.499-1.024 1.325-1.024.239 0 .547.034.884.105v1.024h-.287l-.148-.373c-.168-.449-.329-.595-.595-.595-.287 0-.456.168-.456.449 0 .238.141.399.484.595l.595.337c.406.232.624.561.624 1.074Zm4.538-4.644.14.211v.104h-1.073l-.048-.407c-.112.309-.407.491-.786.491-.561 0-.911-.35-.911-.926 0-.561.315-.932 1.283-1.311l.413-.16v-.526c0-.463-.084-.652-.343-.652-.211 0-.329.113-.533.624l-.231.575h-.317V8.27c.415-.127.828-.211 1.185-.211.792 0 1.221.379 1.221 1.066v2.264Zm-.982-.589V9.587l-.133.056c-.413.168-.567.547-.567 1.101 0 .414.098.653.329.653.23 0 .371-.225.371-.597Zm4.586.8v.104h-1.263V11.6l.141-.211V8.864c0-.302-.091-.484-.309-.484-.26 0-.449.219-.449.646v2.363l.14.211v.104h-1.262V11.6l.14-.211V8.535l-.14-.169v-.104l1.01-.12h.084l.028.393c.119-.309.407-.477.82-.477.575 0 .918.365.918 1.072v2.259L24 11.6Z\"/></svg>", "Unstop": "<svg viewBox=\"0 0 24 24\" xmlns=\"http://www.w3.org/2000/svg\"><path fill=\"#1C4980\" d=\"M12 0C5.394 0 0 5.394 0 12s5.394 12 12 12 12-5.394 12-12S18.606 0 12 0Zm-1.2 16.86H8.303v-1.127c-.715 1.091-1.588 1.552-2.897 1.552-2.085 0-3.248-1.2-3.248-3.333V7.248h2.509v6.182c0 1.164.533 1.722 1.6 1.722 1.224 0 2.012-.752 2.012-1.891V7.236h2.509v9.625zm8.533 0v-5.939c0-1.14-.533-1.721-1.6-1.721-1.224 0-2.012.752-2.012 1.89v5.77h-2.509V7.237h2.497V8.63c.715-1.09 1.588-1.551 2.897-1.551 2.085 0 3.249 1.2 3.249 3.333v6.449z\"/></svg>"};
+const DOM={};const hn=u=>{try{return new URL(u).hostname.replace(/^www\./,"")}catch(e){return null}};
+D.forEach(x=>{const d=hn(x.u);if(d&&!DOM[x.o])DOM[x.o]=d});UNI.forEach(u=>{DOM[u.n]=hn(u.u)});Object.values(RK).forEach(r=>r.rows.forEach(w=>{DOM[w[1]]=w[2]}));NEWS.forEach(n=>{if(!DOM[n.o])DOM[n.o]=hn(n.u)});
+Object.assign(DOM,{"Google":"google.com","Microsoft":"microsoft.com","Amazon":"amazon.com","Goldman Sachs":"goldmansachs.com","Adobe":"adobe.com","Cisco":"cisco.com","Harvard University":"harvard.edu","MIT":"mit.edu","Duolingo":"duolingo.com","Coursera":"coursera.org","freeCodeCamp":"freecodecamp.org","Great Learning":"mygreatlearning.com","Devfolio":"devfolio.co","Unstop":"unstop.com","HackerEarth":"hackerearth.com","MLH":"mlh.io","TinkerHub Foundation":"tinkerhub.org","FOSS United":"fossunited.org","DAAD":"daad.de","Mitacs (Canada)":"mitacs.ca","UK Government":"gov.uk","Government of India":"india.gov.in","AICTE":"aicte-india.org","Ministry of Education":"education.gov.in","NCERT / Ministry of Education":"ncert.nic.in","IITs and IISc":"nptel.ac.in","UGC":"ugc.gov.in","UGC / NTA":"nta.ac.in","CSIR":"csir.res.in","ISRO":"isro.gov.in","ISRO/IIRS":"isro.gov.in","DRDO":"drdo.gov.in","Reliance Foundation":"reliancefoundation.org","USIEF":"usief.org.in","Dept. of Science & Technology":"dst.gov.in","Indian Academies of Science":"ias.ac.in","Commonwealth Scholarship Commission":"cscuk.fcdo.gov.uk","Inlaks Foundation":"inlaksfoundation.org","Indian Institutes of Technology (IITs)":"iitb.ac.in","National Institutes of Technology (NITs)":"nitt.edu","Oxford & Cambridge":"ox.ac.uk","Massachusetts Institute of Technology":"mit.edu","Indian Institute of Science (IISc)":"iisc.ac.in","National University of Singapore (NUS)":"nus.edu.sg","University of Delhi":"du.ac.in","All India Radio (Education Ministry)":"newsonair.gov.in","The Hindu, via Vision IAS":"thehindu.com","AICTE / Reskilll":"aicte-india.org","FOSS United / TinkerHub":"fossunited.org","Dinamalar":"dinamalar.com","Business Today":"businesstoday.in","Careers360":"careers360.com","Deccan Chronicle":"deccanchronicle.com","Buddy4Study":"buddy4study.com"});
+
+const ROADMAPS=[
+{id:"cs",n:"Computer Science / Software Engineering",ic:"route",steps:[
+"Build fundamentals: data structures, algorithms and discrete math — NPTEL or SWAYAM, or freeCodeCamp if you're starting from scratch.",
+"Learn to actually ship code: pick one language, build 3-4 real small projects, and put them on GitHub.",
+"Join a community and contribute: FOSS United or TinkerHub for open-source practice and honest peer feedback.",
+"Apply for internships and fellowships: AICTE's internship portal, Google Summer of Code, or a research seat via PMRF/JRF if research draws you.",
+"Compete to sharpen under pressure: Smart India Hackathon, or anything live on Devfolio or HackerEarth.",
+"Specialise and apply for placements or higher study, using your project and contribution history as proof of skill."]},
+{id:"med",n:"Medicine (NEET path)",ic:"flask",steps:[
+"Lock NCERT biology, chemistry and physics down cold — it's the actual syllabus NEET is drawn from, not extra reading.",
+"Build a realistic mock-test schedule at least a year out; speed and accuracy under time pressure matter as much as raw knowledge.",
+"Track NEET counselling rounds and the seat matrix closely once results are out — a missed round can genuinely cost you a seat.",
+"Research scholarship support early: AICTE and state-level schemes, plus INSPIRE if you later move toward biomedical research.",
+"Once admitted, look into ICMR and research-fellowship options if you want research experience alongside your MBBS."]},
+{id:"design",n:"Design (NID / UCEED path)",ic:"sparkle",steps:[
+"Build a visual-thinking habit early: sketch daily, and study everyday objects and interfaces critically, not just make art.",
+"Prepare specifically for UCEED/NID's design-aptitude format — it tests observation and reasoning, not just drawing skill.",
+"Build a portfolio of 6-10 strong, varied pieces well before interviews — the process sketches matter more than one polished final image.",
+"Use free resources like Coursera's financial aid or Google Digital Garage to pick up adjacent skills: basic UI tools, typography.",
+"Apply for design-specific fellowships and internships as you progress — most come through direct studio or startup outreach, not a central portal."]},
+{id:"ds",n:"Data Science / AI",ic:"compass",steps:[
+"Start with statistics and Python, not a framework — NPTEL, SWAYAM or freeCodeCamp's data-analysis track all work.",
+"Build 2-3 end-to-end projects on real public datasets, not toy tutorials — deployment included, not just a notebook.",
+"Learn the ethics and limits of the tools you're using — the AI & your studies section here is a reasonable starting point.",
+"Follow or contribute to an open-source ML project through FOSS United or TinkerHub to see how real codebases are actually structured.",
+"Apply to research seats (PMRF, JRF) if you want to go deep, or internships and GSoC if you want product-building experience."]}
+];
+
+const AI=[
+{h:"AI literacy is entering school from Class 3",p:"Under NEP 2020, AI electives already run for senior school students. The plan now extends basic AI literacy down to Class 3, with the Education Ministry framing it as a core skill rather than an optional add-on, starting the 2026-27 academic year.",u:"https://newsonair.gov.in/education-minister-highlights-rapid-ai-adoption-in-indian-education"},
+{h:"Universities are wiring AI tutors into coursework",p:"Several top institutes, including IIT Delhi, IIM Ahmedabad and AIIMS New Delhi, took up large-scale ChatGPT Edu access for students and faculty in 2026, paired with training on responsible, citation-honest use rather than copy-paste answers.",u:""},
+{h:"Students themselves are divided on it",p:"A 2026 HP Futures survey found 82% of Indian students worry that using AI to move faster through assignments comes at the cost of actually understanding the material — a concern worth taking seriously before leaning on a tool for every answer.",u:"https://www.deccanchronicle.com/amp/artificial-intelligence/indian-students-worry-ai-prioritising-speed-over-deep-learning-report-1997461"},
+{h:"IIT Madras has been asked to study the impact",p:"Rather than adopting AI in education uncritically, the government has tasked IIT Madras with formally assessing how AI changes learning outcomes — the kind of evidence that should eventually shape how it's used in your own classroom.",u:""},
+{h:"The access gap is the clearest documented benefit",p:"The best-evidenced upside so far is personalised tutoring and instant doubt-resolution for students in Tier-2 and Tier-3 cities who previously had no access to coaching at all — AI narrowing a gap rather than replacing a teacher.",u:""}
+];
+
+const TYPES=["All","Scholarship","Internship","Research","Hackathon","Course","Community"];
+const CTA={Scholarship:"Apply on official portal",Internship:"View openings",Research:"See programme and apply",Course:"Start learning",Hackathon:"Register / browse now",Community:"Visit community"};
+const G={Scholarship:["Read the full eligibility rules on the official page.","Keep ID, marksheets, income or category certificate and bank details ready.","Apply only on the official site and note your application ID.","Track status and respond quickly to any verification request."],
+Internship:["Check eligible year, branch and duration.","Prepare a one-page CV and a short statement of interest.","Apply through the official portal or listed contact only.","Follow up politely after the stated review time."],
+Research:["Read the programme page and pick the project that fits.","Gather transcripts, CV and, if asked, a statement of purpose and references.","Submit through the official system before the cycle closes.","Ask for recommendation letters early."],
+Course:["Open the course page and check schedule and prerequisites.","Enrol for free; certificates may need a paid exam.","Plan weekly study time and note assessment dates."],
+Hackathon:["Check whether it needs institute nomination or lets individuals register directly.","Form a balanced team and read every problem statement before picking one.","Register before the deadline and keep a working prototype, not just slides.","Prepare a tight, honest demo — judges notice padding."],
+Community:["Open their site or Discord/Telegram channel and introduce yourself.","Check their events page for the next meetup or sprint, in person or online.","Pick one small open issue or challenge to contribute to first.","Keep showing up — most of the value here is the people, not a one-time transaction."]};
+const NS=["Complete One-Time Registration (OTR) using your Aadhaar.","Pick the scheme that matches your course, category and income.","Upload marksheets, income or category certificate, bank passbook and ID.","Submit, then ask your institute to verify before the deadline.","Make sure your name and date of birth match across Aadhaar, marksheet and bank records; mismatches are a common cause of rejection."];
+
+const LVLW={school:"School",undergrad:"UG",undergraduate:"UG",bachelor:"UG",bachelors:"UG","ug ":"UG",postgrad:"PG",postgraduate:"PG",masters:"PG",master:"PG",phd:"PhD",doctoral:"PhD",doctorate:"PhD"};
+const FLDW={engineering:"Engineering",science:"Science",computing:"Computing","computer science":"Computing",coding:"Computing",programming:"Computing",agriculture:"Agriculture",humanities:"Humanities",arts:"Humanities",management:"Management",business:"Management"};
+const LOCW={india:"India",indian:"India",abroad:"Abroad",overseas:"Abroad",international:"Abroad",foreign:"Abroad"};
+const FUNW={funded:"Funded",fund:"Funded",paid:"Funded",stipend:"Funded",free:"Free","no cost":"Free"};
+const CATW={scholarship:"Scholarship",scholarships:"Scholarship",internship:"Internship",internships:"Internship",fellowship:"Research",fellowships:"Research",research:"Research",hackathon:"Hackathon",hackathons:"Hackathon",competition:"Hackathon",course:"Course",courses:"Course",community:"Community",foss:"Community","open source":"Community"};
+function nlpApply(raw){const q=" "+raw.toLowerCase()+" ";const tryset=(dict,sel)=>{for(const k in dict){if(q.includes(k)){$(sel).value=dict[k];return}}};
+tryset(LVLW,"pl");tryset(FLDW,"pf");tryset(LOCW,"pr");tryset(FUNW,"pm");
+for(const k in CATW){if(q.includes(k)){st.type=CATW[k];break}}}
+
+const st={tab:"home",type:"All",saved:false,saves:new Set(),q:"",nt:"All",rk:"eng",res:"study",wi:0,wtimer:null,cmp:new Set(["iit","nit","bits"])};
+const h=(t,c,x)=>{const n=document.createElement(t);if(c)n.className=c;if(x!=null)n.textContent=x;return n};
+const safeUrl=u=>{if(!u)return null;try{const x=new URL(u);return x.protocol==="https:"?x.href:null}catch(e){return null}};
+const ld=k=>{try{return JSON.parse(localStorage.getItem(k)||"null")}catch(e){return null}};
+const sv=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+const today=(()=>{const n=new Date();return Date.UTC(n.getFullYear(),n.getMonth(),n.getDate())})();
+const days=d=>{if(!d)return null;const p=d.split("-").map(Number);return Math.round((Date.UTC(p[0],p[1]-1,p[2])-today)/864e5)};
+const fmt=d=>{const p=d.split("-").map(Number);return new Date(Date.UTC(p[0],p[1]-1,p[2])).toLocaleDateString("en-IN",{day:"numeric",month:"short",year:"numeric",timeZone:"UTC"})};
+
+function orgLogo(name){const w=name.split(/[\s/&(),·.-]+/).filter(t=>/^[A-Z]/.test(t));let i=(w.length<2?(w[0]||name).slice(0,2):w.slice(0,3).map(t=>t[0]).join("")).toUpperCase();let n=0;for(const c of name)n=(n*31+c.charCodeAt(0))>>>0;const d=h("div","logo hard",i);const pal=["var(--gold)","var(--pink)","var(--sky)","var(--mint)","var(--indigo)","#ffb86b","var(--red)"];d.style.background=pal[n%pal.length];d.style.color=/indigo|sky|mint|red/.test(pal[n%pal.length])?"#fff":"var(--ink)";if(i.length>3)d.style.fontSize="10px";const bc=BRAND[name];if(bc){d.style.background=bc;d.style.color="#fff";d.style.border="3px solid var(--ink)"}d.style.fontSize=(d.textContent.length>3?"10px":"13px");d.style.letterSpacing="-.02em";
+const LG=LOGOS[name];if(LG){d.textContent="";d.style.background="#fff";d.style.border="3px solid var(--ink)";d.insertAdjacentHTML("beforeend",LG);const sv=d.querySelector("svg");sv.setAttribute("aria-hidden","true");sv.style.cssText="position:absolute;inset:8px;width:calc(100% - 16px);height:calc(100% - 16px)"}
+d.setAttribute("role","img");d.setAttribute("aria-label",name);
+const dom=DOM[name];if(dom){const im=new Image();im.alt="";im.loading="lazy";im.referrerPolicy="no-referrer";const srcs=["https://www.google.com/s2/favicons?domain="+dom+"&sz=128","https://icons.duckduckgo.com/ip3/"+dom+".ico"];let t=0;im.onerror=()=>{t++;if(t<srcs.length)im.src=srcs[t];else im.remove()};im.src=srcs[0];d.appendChild(im)}
+return d}
+function link(txt,u,cls){const s=safeUrl(u);if(!s)return null;const a=h("a","btn hard shadow "+cls,txt+" ↗");a.href=s;a.target="_blank";a.rel="noopener noreferrer nofollow";return a}
+function dpill(x){const n=days(x.d);if(n===null)return["Ongoing / rolling","pill"];if(n<0)return["Closed "+fmt(x.d),"pill er"];return["Closes "+fmt(x.d)+" · "+(n===0?"today":n+(n===1?" day":" days")+" left"),"pill "+(n<=14?"wn":"ok")]}
+function toggle(x){st.saves.has(x.id)?st.saves.delete(x.id):st.saves.add(x.id);sv("nv_saved",[...st.saves]);if(st.tab==="opp")list();if(st.tab==="home")wheelData();}
+
+function card(x){const c=h("article","card hard shadow");c.appendChild(cardArt(x.c,x.id));const hd=h("div","hd"),t=h("div");hd.appendChild(orgLogo(x.o));hd.appendChild(catIcon(x.c));t.appendChild(h("h3",null,x.t));t.appendChild(h("div","org",x.o));hd.appendChild(t);c.appendChild(hd);
+const p=h("div","pills"),dd=dpill(x);[[x.c,"pill k"],[x.l.join(" · "),"pill"],[x.r,"pill"],[x.m,"pill"],dd].forEach(a=>p.appendChild(h("span",a[1],a[0])));c.appendChild(p);
+c.appendChild(h("p","clamp",x.s));const r=h("div","row"),b=h("button","btn p hard shadow","View details");b.type="button";b.onclick=()=>openD(x);r.appendChild(b);
+const s=h("button","btn hard shadow",st.saves.has(x.id)?"Saved ✓":"Save");s.type="button";s.setAttribute("aria-pressed",st.saves.has(x.id));s.onclick=()=>toggle(x);r.appendChild(s);c.appendChild(r);
+c.onclick=e=>{if(!e.target.closest("a,button"))openD(x)};return c}
+
+function list(){const f={l:$("pl").value,fl:$("pf").value,r:$("pr").value,m:$("pm").value},q=st.q.toLowerCase(),sort=$("ps").value;
+const it=D.filter(x=>(!f.l||x.l.includes(f.l))&&(!f.fl||x.f.includes("Any")||x.f.includes(f.fl))&&(!f.r||x.r===f.r)&&(!f.m||x.m===f.m)&&(st.type==="All"||x.c===st.type)&&(!st.saved||st.saves.has(x.id))&&(!q||[x.t,x.o,x.c,x.s].join(" ").toLowerCase().includes(q)));
+it.sort((a,b)=>{if(sort==="t")return a.t.localeCompare(b.t);const k=x=>{const n=days(x.d);return n===null?1e9:n<0?2e9:n};return k(a)-k(b)||a.t.localeCompare(b.t)});
+const L=$("list");L.replaceChildren();$("count").textContent=it.length+(it.length===1?" result":" results");
+if(!it.length)L.appendChild(h("div","empty","Nothing matches. Try resetting a filter."));it.forEach(x=>L.appendChild(card(x)));
+document.querySelectorAll("#types .chip").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.s?st.saved:b.dataset.k===st.type)))}
+
+function openD(x){const d=$("dlg");d.replaceChildren();const hd=h("div","dh"),t=h("div"),dd=dpill(x),u=safeUrl(x.u);
+hd.appendChild(orgLogo(x.o));const g=h("h2",null,x.t);g.id="dt";t.appendChild(g);t.appendChild(h("div","org",x.o));hd.appendChild(t);
+const cl=h("button","btn hard dx","✕");cl.type="button";cl.setAttribute("aria-label","Close");cl.onclick=()=>d.close();hd.appendChild(cl);d.appendChild(hd);
+const b=h("div","db"),pl=h("div","pills");const bn=cardArt(x.c,x.id);bn.style.height="150px";bn.style.margin="16px 0 0";bn.style.borderRadius="14px";bn.style.border="3px solid var(--ink)";b.appendChild(bn);[[x.c,"pill k"],[x.m,"pill"],[x.r,"pill"]].forEach(a=>pl.appendChild(h("span",a[1],a[0])));b.appendChild(pl);
+b.appendChild(h("div","dd",dd[0]+(x.d?" (verified from official notice)":" – confirm current dates on the official site")));
+b.appendChild(h("h4",null,"About"));b.appendChild(h("p",null,x.s));b.appendChild(h("h4",null,"Who can apply"));b.appendChild(h("p",null,x.e));
+const f=h("div","facts");[["Level",x.l.join(", ")],["Field",x.f.join(", ")],["Location",x.r],["Funding",x.m],["Provider",x.o],["Website",u?new URL(u).hostname:"-"]].forEach(kv=>{const e=h("div");e.appendChild(h("b",null,kv[0]));e.appendChild(document.createTextNode(kv[1]));f.appendChild(e)});
+b.appendChild(h("h4",null,"At a glance"));b.appendChild(f);b.appendChild(h("h4",null,"How to apply"));const ol=h("ol");(x.u===NSP?NS:G[x.c]).forEach(s=>ol.appendChild(h("li",null,s)));b.appendChild(ol);
+b.appendChild(h("p","warn","Apply only through the official website. Genuine scholarships and government portals never charge a fee to apply."));d.appendChild(b);
+const ft=h("div","df"),a=link(CTA[x.c],x.u,"p");if(a)ft.appendChild(a);const s=h("button","btn hard");s.type="button";const up=()=>{const v=st.saves.has(x.id);s.textContent=v?"Saved ✓":"Save";s.setAttribute("aria-pressed",v)};up();s.onclick=()=>{toggle(x);up()};ft.appendChild(s);d.appendChild(ft);
+d.setAttribute("aria-labelledby","dt");d.showModal()}
+$("dlg").addEventListener("click",e=>{if(e.target===$("dlg"))$("dlg").close()});
+
+function openUni(x){const d=$("dlg");d.replaceChildren();const hd=h("div","dh"),t=h("div");hd.appendChild(orgLogo(x.n));const g=h("h2",null,x.n);g.id="dt";t.appendChild(g);t.appendChild(h("div","org",x.type));hd.appendChild(t);
+const cl=h("button","btn hard dx","✕");cl.type="button";cl.setAttribute("aria-label","Close");cl.onclick=()=>d.close();hd.appendChild(cl);d.appendChild(hd);
+const b=h("div","db");const bn=cardArt("Uni",x.id);bn.style.height="150px";bn.style.margin="16px 0 0";bn.style.borderRadius="14px";bn.style.border="3px solid var(--ink)";b.appendChild(bn);b.appendChild(h("h4",null,"About"));b.appendChild(h("p",null,x.about));
+b.appendChild(h("h4",null,"Entrance route"));b.appendChild(h("p",null,x.entrance));
+b.appendChild(h("h4",null,"Typical eligibility"));b.appendChild(h("p",null,x.elig));
+b.appendChild(h("h4",null,"Where it ranks"));b.appendChild(h("p",null,x.rankref));d.appendChild(b);
+const ft=h("div","df"),a=link("Official admissions site",x.u,"p");if(a)ft.appendChild(a);d.appendChild(ft);
+d.setAttribute("aria-labelledby","dt");d.showModal()}
+
+function openRoad(r){const d=$("dlg");d.replaceChildren();const hd=h("div","dh"),t=h("div");const g=h("h2",null,r.n);g.id="dt";t.appendChild(g);t.appendChild(h("div","org","A rough path, not a rulebook — skip steps you've already done."));hd.appendChild(t);
+const cl=h("button","btn hard dx","✕");cl.type="button";cl.setAttribute("aria-label","Close");cl.onclick=()=>d.close();hd.appendChild(cl);d.appendChild(hd);
+const b=h("div","db");b.appendChild(h("h4",null,"Suggested order"));const ol=h("ol");r.steps.forEach(s=>ol.appendChild(h("li",null,s)));b.appendChild(ol);d.appendChild(b);
+d.setAttribute("aria-labelledby","dt");d.showModal()}
+
+function shrinkImg(file,cb){const fr=new FileReader();fr.onerror=()=>cb(null);fr.onload=()=>{const im=new Image();im.onerror=()=>cb(null);im.onload=()=>{try{const k=Math.min(1,900/Math.max(im.width,im.height)),cv=document.createElement("canvas");cv.width=Math.round(im.width*k);cv.height=Math.round(im.height*k);cv.getContext("2d").drawImage(im,0,0,cv.width,cv.height);cb(cv.toDataURL("image/jpeg",0.72))}catch(e){cb(null)}};im.src=fr.result};fr.readAsDataURL(file)}
+let NP=[];
+function loadNP(){const p=ld("nv_newsposts");NP=Array.isArray(p)?p:NP;return NP}
+function saveNP(){sv("nv_newsposts",NP)}
+function newsForm(){if($("npForm"))return;const f=h("div","npform hard shadow");f.id="npForm";f.appendChild(h("h3",null,"Share a post with other students"));
+const r=h("div","r2"),nm=document.createElement("input");nm.placeholder="Your name (optional)";nm.maxLength=40;const ti=document.createElement("input");ti.placeholder="Title — e.g. How I won my first hackathon";ti.maxLength=100;r.append(nm,ti);
+const bd=document.createElement("textarea");bd.placeholder="Write your post, news tip or experience…";bd.rows=4;bd.maxLength=800;
+const fl=h("label","org","Add a real photo (optional): "),fi=document.createElement("input");fi.type="file";fi.accept="image/*";fl.appendChild(fi);
+const b=h("button","btn p hard shadow","Publish post");b.type="button";
+b.onclick=()=>{const t=ti.value.trim(),x=bd.value.trim();if(!t||!x){(t?bd:ti).focus();return}
+const fin=img=>{loadNP();NP.unshift({img:img||null,id:Date.now()+"",t:t.slice(0,100),x:x.slice(0,800),o:(nm.value.trim()||"Student").slice(0,40),d:new Date().toLocaleDateString("en-IN",{day:"numeric",month:"short",year:"numeric"}),s:"Community",u:null,mine:true});saveNP();ti.value="";bd.value="";st.nt="All";document.querySelectorAll("#ntags .chip").forEach((c,i)=>c.setAttribute("aria-pressed",String(i===0)));news()};const fo=fi.files&&fi.files[0];fi.value="";if(fo)shrinkImg(fo,fin);else fin(null)};
+f.append(r,bd,fl,b);$("nlist").before(f)}
+function news(){newsForm();loadNP();const L=$("nlist");L.replaceChildren();[...NP,...NEWS].filter(n=>st.nt==="All"||n.s===st.nt).forEach(n=>L.appendChild(newsCard(n)))}
+function newsKind(n){if(n.mine)return"Community";if(n.s==="Protests")return"Protest";const t=n.t;
+if(/NIRF/.test(t))return"Podium";if(/QS|world rankings/i.test(t))return"Globe";if(/worry/i.test(t))return"Survey";
+if(/NSP|scholarship/i.test(t))return"Calendar";if(/Hackathon/i.test(t))return"Hackathon";if(/classroom|Class 3/i.test(t))return"Classroom";
+if(/FOSS|Tinker/i.test(t))return"Community";return n.s==="AI & studies"?"AI":"Community"}
+function newsCard(n){const c=h("article","card hard shadow nw");const art=cardArt(newsKind(n),n.t);if(n.img){const ph=h("img","ph");ph.alt="";ph.src=n.img;art.appendChild(ph)}c.appendChild(art);const m=h("div"),p=h("div","pills");p.appendChild(h("span","pill k",n.s));p.appendChild(h("span","pill",n.d));p.appendChild(h("span","pill",n.o));m.appendChild(p);const t=h("h3",null,n.t);t.style.margin="9px 0 5px";m.appendChild(t);m.appendChild(h("p","clamp",n.x));c.appendChild(m);const act=h("div");act.style.cssText="display:flex;flex-direction:column;gap:8px;align-items:stretch";const vb=h("button","btn p hard shadow","View story");vb.type="button";vb.onclick=()=>openNews(n);act.appendChild(vb);const a=link("Read article",n.u,"");if(a)act.appendChild(a);
+if(n.mine){const del=h("button","btn hard","Delete");del.type="button";del.onclick=()=>{NP=NP.filter(x=>x.id!==n.id);saveNP();news();if(st.tab==="home")homeNews()};act.appendChild(del)}
+c.appendChild(act);c.onclick=e=>{if(!e.target.closest("a,button"))openNews(n)};return c}
+function openNews(n){const d=$("dlg");d.replaceChildren();const hd=h("div","dh"),t=h("div");hd.appendChild(orgLogo(n.o));const g=h("h2",null,n.t);g.id="dt";t.appendChild(g);t.appendChild(h("div","org",n.o+" · "+n.d));hd.appendChild(t);
+const cl=h("button","btn hard dx","✕");cl.type="button";cl.setAttribute("aria-label","Close");cl.onclick=()=>d.close();hd.appendChild(cl);d.appendChild(hd);
+const b=h("div","db");const bn=cardArt(newsKind(n),n.t);bn.style.height="240px";bn.style.margin="16px 0 0";bn.style.borderRadius="14px";bn.style.border="3px solid var(--ink)";if(n.img){const ph=h("img","ph");ph.alt="";ph.src=n.img;bn.appendChild(ph)}b.appendChild(bn);
+const pl=h("div","pills");pl.style.marginTop="14px";[[n.s,"pill k"],[n.d,"pill"],[n.o,"pill"]].forEach(a=>pl.appendChild(h("span",a[1],a[0])));b.appendChild(pl);
+b.appendChild(h("h4",null,"The story"));b.appendChild(h("p",null,n.x));if(n.w){b.appendChild(h("h4",null,"What it means for you"));b.appendChild(h("p",null,n.w))}
+b.appendChild(h("p","warn",n.mine?"Posted by a student in this browser.":"Summarised in our own words. Open the original article for the full report, and check dates on official sites."));d.appendChild(b);
+const ft=h("div","df"),a=link("Read full article",n.u,"p");if(a)ft.appendChild(a);else{const k=h("button","btn p hard","Close");k.type="button";k.onclick=()=>d.close();ft.appendChild(k)}d.appendChild(ft);d.setAttribute("aria-labelledby","dt");d.showModal()}
+
+function rank(){const R=RK[st.rk];$("rnote").textContent=R.note;const L=$("rlist");L.replaceChildren();R.rows.forEach(row=>{const n=row[0],name=row[1],site=row[2],x=row[3];const c=h("article","card hard shadow rr");c.appendChild(h("div","rn",String(n)));c.appendChild(orgLogo(name));const m=h("div");m.appendChild(h("h3",null,name));m.appendChild(h("div","org",x||site));c.appendChild(m);const a=link("Visit website","https://"+site+"/","");if(a)c.appendChild(a);L.appendChild(c)});
+const f=h("div");const a=link(R.sl,R.src,"p");if(a){f.appendChild(a);L.appendChild(f)}
+document.querySelectorAll("#rtabs .chip").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.k===st.rk)))}
+
+function unis(){const L=$("ulist");L.replaceChildren();UNI.forEach(x=>{const c=h("article","card hard shadow");c.appendChild(cardArt("Uni",x.id));const hd=h("div","hd");hd.appendChild(orgLogo(x.n));const t=h("div");t.appendChild(h("h3",null,x.n));t.appendChild(h("div","org",x.type));hd.appendChild(t);c.appendChild(hd);
+const p=h("div","pills");p.appendChild(h("span","pill k",x.entrance.split("(")[0].trim()));p.appendChild(h("span","pill",x.pkg||""));p.appendChild(h("span","pill",x.fees||""));c.appendChild(p);
+c.appendChild(h("p","clamp",x.about));
+const r=h("div","row");const b=h("button","btn p","View details");b.type="button";b.onclick=()=>openUni(x);r.appendChild(b);const a=link("Official site",x.u,"");if(a)r.appendChild(a);
+const cb=h("button","btn hard",st.cmp.has(x.id)?"In compare ✓":"+ Compare");cb.type="button";cb.setAttribute("aria-pressed",st.cmp.has(x.id));cb.onclick=()=>{toggleCmp(x.id);cb.textContent=st.cmp.has(x.id)?"In compare ✓":"+ Compare";cb.setAttribute("aria-pressed",st.cmp.has(x.id))};r.appendChild(cb);
+c.appendChild(r);
+c.onclick=e=>{if(!e.target.closest("a,button"))openUni(x)};L.appendChild(c)});cmpRender()}
+
+function toggleCmp(id){if(st.cmp.has(id))st.cmp.delete(id);else{if(st.cmp.size>=3)st.cmp.delete([...st.cmp][0]);st.cmp.add(id)}cmpRender()}
+function cmpRender(){const picker=$("cmpPicker"),table=$("cmpTable");if(!picker)return;picker.replaceChildren();
+UNI.forEach(u=>{const b=h("button","chip hard shadow",u.n.length>22?u.n.slice(0,20)+"…":u.n);b.type="button";b.setAttribute("aria-pressed",st.cmp.has(u.id));b.onclick=()=>{toggleCmp(u.id);document.querySelectorAll("#ulist .row button.hard").forEach(x=>{});unis()};picker.appendChild(b)});
+table.replaceChildren();
+const picked=[...st.cmp].map(id=>UNI_IDX[id]).filter(Boolean);
+if(picked.length<2){table.appendChild(h("p","note","Pick at least 2 universities above to see them side by side."));return}
+const rows=[["Type",u=>u.type],["Fees (total)",u=>u.fees],["Avg package",u=>u.pkg],["ROI (fee payback)",u=>u.roi],["Admission chances",u=>u.chance],["Marks / score needed",u=>u.marks],["Entrance route",u=>u.entrance]];
+const tb=h("table");tb.style.cssText="width:100%;border-collapse:collapse;background:var(--card);border-radius:14px;overflow:hidden";
+const thead=h("tr");thead.appendChild(h("th",null,"")).style.cssText="text-align:left;padding:10px 12px;font-size:11px;background:var(--ink);color:var(--gold)";
+picked.forEach(u=>{const th=h("th",null,u.n);th.style.cssText="text-align:left;padding:10px 12px;font-size:12.5px;background:var(--ink);color:var(--gold);font-weight:800";thead.appendChild(th)});
+tb.appendChild(thead);
+rows.forEach((r,ri)=>{const tr=h("tr");tr.style.background=ri%2?"#fff":"rgba(255,91,69,.06)";const td0=h("td",null,r[0]);td0.style.cssText="padding:9px 12px;font-weight:800;font-size:12px;color:var(--mu);white-space:nowrap";tr.appendChild(td0);
+picked.forEach(u=>{const td=h("td",null,r[1](u));td.style.cssText="padding:9px 12px;font-size:12.5px;font-weight:700";tr.appendChild(td)});tb.appendChild(tr)});
+table.appendChild(tb)}
+
+function studyGrid(){const sites=D.filter(x=>x.c==="Course");const g=h("div","grid");sites.forEach(x=>g.appendChild(card(x)));return g}
+function aiGrid(){const g=h("div","grid");AI.forEach(x=>{const c=h("div","aicard hard shadow");c.style.flexDirection="column";c.style.overflow="hidden";const ab=cardArt("AI",x.h);ab.style.margin="-18px -18px 4px";c.appendChild(ab);const m=h("div");m.appendChild(h("h3",null,x.h));m.appendChild(h("p",null,x.p));const a=link("Read more",x.u,"");if(a){a.style.marginTop="4px";m.appendChild(a)}c.appendChild(m);g.appendChild(c)});return g}
+function roadGrid(){const g=h("div","grid");ROADMAPS.forEach(r=>{const c=h("div","rmcard hard shadow");c.appendChild(icon(r.ic,"ic"));c.appendChild(h("h3",null,r.n));c.appendChild(h("span",null,r.steps.length+" steps"));c.onclick=()=>openRoad(r);g.appendChild(c)});return g}
+
+function loadPosts(){const p=ld("nv_posts");return Array.isArray(p)?p:[]}
+function savePosts(p){sv("nv_posts",p)}
+function communityView(){const host=$("r-comm");host.replaceChildren();
+host.appendChild(h("p","note","Posts here are saved only in your own browser — there's no shared server, so nobody else can see, read or edit them. Treat this as your personal study notebook, not a public forum."));
+const form=h("div","postform hard shadow");
+const nm=document.createElement("input");nm.placeholder="Your name (optional)";nm.maxLength=40;
+const ti=document.createElement("input");ti.placeholder="Title — e.g. how I prepped for GATE";ti.maxLength=90;
+const bd=document.createElement("textarea");bd.placeholder="Share a tip, a resource or your own experience…";bd.maxLength=600;bd.rows=4;
+const btn=h("button","btn p hard shadow","Add to your notebook");btn.type="button";
+btn.onclick=()=>{const t=ti.value.trim(),bb=bd.value.trim();if(!t||!bb)return;const posts=loadPosts();posts.unshift({id:Date.now()+"",title:t.slice(0,90),body:bb.slice(0,600),name:(nm.value.trim()||"Anonymous").slice(0,40),ts:new Date().toISOString()});savePosts(posts);ti.value="";bd.value="";renderPosts()};
+form.append(nm,ti,bd,btn);host.appendChild(form);
+const list2=h("div","grid");list2.id="postlist";host.appendChild(list2);renderPosts()}
+function renderPosts(){const L=$("postlist");if(!L)return;L.replaceChildren();const posts=loadPosts();
+if(!posts.length){L.appendChild(h("div","empty","Nothing here yet — be the first."));return}
+posts.forEach(p=>{const c=h("div","postcard hard shadow");c.appendChild(h("div","pmeta",p.name+" · "+new Date(p.ts).toLocaleDateString("en-IN",{day:"numeric",month:"short"})));c.appendChild(h("h3",null,p.title));c.appendChild(h("p",null,p.body));
+const del=h("button","btn hard","Delete");del.type="button";del.style.alignSelf="flex-start";del.onclick=()=>{savePosts(loadPosts().filter(x=>x.id!==p.id));renderPosts()};c.appendChild(del);L.appendChild(c)})}
+
+function resources(){const views={study:$("r-study"),road:$("r-road"),ai:$("r-ai"),comm:$("r-comm")};
+Object.keys(views).forEach(k=>views[k].hidden=k!==st.res);
+if(st.res==="study"&&!views.study.childElementCount){views.study.appendChild(h("p","note","Free, legitimate study sources — government platforms and well-known open courseware, not paid coaching funnels."));views.study.appendChild(studyGrid())}
+if(st.res==="road"&&!views.road.childElementCount){views.road.appendChild(h("p","note","Click a path for an ordered, honest list of what to actually do next."));views.road.appendChild(roadGrid())}
+if(st.res==="ai"&&!views.ai.childElementCount){views.ai.appendChild(h("p","note","A short, honestly-sourced read on how AI is actually showing up in Indian education right now — not hype."));views.ai.appendChild(aiGrid())}
+if(st.res==="comm"&&!views.comm.childElementCount)communityView();
+document.querySelectorAll("#rsub button").forEach(btn=>btn.setAttribute("aria-pressed",String(btn.dataset.k===st.res)))}
+
+function stats(){const closingSoon=D.filter(x=>{const n=days(x.d);return n!==null&&n>=0&&n<=30}).length;const hack=D.filter(x=>x.c==="Hackathon").length;const study=D.filter(x=>x.c==="Course").length;
+const nearest=D.filter(x=>days(x.d)!==null&&days(x.d)>=0).sort((a,b)=>days(a.d)-days(b.d))[0];
+const pods=[
+{ic:"bolt",big:D.length,lb:"live opportunities",go:()=>tab("opp")},
+{ic:"clock",big:closingSoon,lb:"closing within 30 days",go:()=>tab("opp")},
+{ic:"trophy",big:hack,lb:"hackathons to try",go:()=>{tab("opp");st.type="Hackathon";list()}},
+{ic:"library",big:study,lb:"free study resources",go:()=>tab("res")},
+{ic:"news",big:NEWS.length,lb:"news stories tracked",go:()=>tab("news")},
+{ic:"star",big:st.saves.size,lb:"saved by you",go:()=>{tab("opp");st.saved=true;list()}}
+];
+if(nearest)pods.push({ic:"clock",ttl:nearest.t,sub:dpill(nearest)[0],go:()=>{tab("opp");openD(nearest)}});
+if(NEWS[0])pods.push({ic:"news",ttl:NEWS[0].t,sub:NEWS[0].o,go:()=>tab("news")});
+return pods}
+
+const PODCOL=["var(--brand)","var(--red)","var(--pink)","var(--brand)","var(--red)","var(--gold)","var(--indigo)","var(--pink)"];
+let WHEEL=[];
+function wheelData(){WHEEL=stats();if($("stage"))layoutWheel(true)}
+function layoutWheel(rebuild){const track=$("track"),dotsEl=$("dots");if(rebuild){track.replaceChildren();dotsEl.replaceChildren();WHEEL.forEach((p,idx)=>{const pod=h("div","pod hard");const icw=h("div","podic");icw.style.background=PODCOL[idx%PODCOL.length];icw.appendChild(icon(p.ic));pod.appendChild(icw);
+if(p.big!==undefined){pod.appendChild(h("b",null,String(p.big)));pod.appendChild(h("div","lb",p.lb))}
+else{pod.appendChild(h("div","ttl",p.ttl));pod.appendChild(h("div","lb",p.sub||""))}
+pod.addEventListener("click",()=>{if(idx===st.wi){p.go&&p.go()}else{st.wi=idx;render()}});
+track.appendChild(pod);
+const dot=h("button","dot");dot.type="button";dot.setAttribute("aria-label","Go to item "+(idx+1));dot.onclick=()=>{st.wi=idx;render()};dotsEl.appendChild(dot)})}
+render();
+function render(){const n=WHEEL.length;track.querySelectorAll(".pod").forEach((pod,idx)=>{let off=idx-st.wi;if(off>n/2)off-=n;if(off<-n/2)off+=n;const abs=Math.abs(off);pod.style.transform="translateX("+(off*132)+"px) translateY(-50%) scale("+(abs===0?1:abs===1?.78:.58)+") rotateY("+(off*-10)+"deg)";pod.style.opacity=abs>2?"0":abs===0?"1":abs===1?".85":".45";pod.style.zIndex=String(50-abs);pod.style.filter=abs===0?"none":"saturate(.8)"});
+dotsEl.querySelectorAll(".dot").forEach((d,idx)=>d.setAttribute("aria-current",String(idx===st.wi)))}}
+function wheelStep(dir){const n=WHEEL.length;if(!n)return;st.wi=(st.wi+dir+n)%n;layoutWheel(false)}
+function wheelAuto(){stopAuto();if(rm)return;st.wtimer=setInterval(()=>wheelStep(1),4600)}
+function stopAuto(){if(st.wtimer){clearInterval(st.wtimer);st.wtimer=null}}
+
+function tiles(){const defs=[
+{cat:"Scholarship",ic:"cap",bg:"var(--gold)",lb:"Funded study"},
+{cat:"Internship",ic:"case",bg:"var(--pink)",lb:"Internships"},
+{cat:"Research",ic:"flask",bg:"var(--sky)",lb:"Research seats"},
+{cat:"Hackathon",ic:"trophy",bg:"var(--indigo)",lb:"Hackathons"},
+{cat:"Course",ic:"book",bg:"var(--mint)",lb:"Free courses"},
+{cat:"Community",ic:"users",bg:"var(--red)",lb:"Communities"},
+{cat:"__uni",ic:"globe",bg:"#ffb86b",lb:"Universities"},
+{cat:"__rank",ic:"compass",bg:"var(--brand)",lb:"Rankings"}];
+const T=$("tiles");T.replaceChildren();defs.forEach(d=>{const t=h("div","tile hard shadow");t.style.background=d.bg;t.style.color=/indigo|sky|mint|red/.test(d.bg)?"#fff":"var(--ink)";t.setAttribute("data-tip","Browse "+d.lb.toLowerCase());t.appendChild(icon(d.ic,"ic"));t.appendChild(h("b",null,d.lb));t.appendChild(h("span",null,d.cat==="__rank"?"NIRF · QS":d.cat==="__uni"?"Eligibility & entrance":"See all →"));
+t.onclick=()=>{if(d.cat==="__rank")tab("rank");else if(d.cat==="__uni")tab("uni");else{tab("opp");st.type=d.cat;st.saved=false;list()}};T.appendChild(t)});}
+
+function homeNews(){const L=$("homeNews");L.replaceChildren();loadNP();[...NP,...NEWS].slice(0,3).forEach(n=>L.appendChild(newsCard(n)))}
+function homeFel(){const L=$("homeFel");L.replaceChildren();D.filter(x=>x.c==="Internship"||x.fel).slice(0,6).forEach(x=>L.appendChild(card(x)))}
+
+function tab(k){st.tab=k;["home","opp","uni","news","rank","res"].forEach(v=>$("v-"+v).hidden=v!==k);
+document.querySelectorAll(".tab").forEach(b=>b.setAttribute("aria-selected",String(b.dataset.k===k)));
+({home:()=>{wheelData();tiles();homeNews();homeFel()},opp:list,uni:unis,news,rank,res:resources})[k]();
+if(k==="home")wheelAuto();else stopAuto();}
+
+const TABDEFS=[["home","Home","bolt"],["opp","Opportunities","cap"],["uni","Universities","globe"],["news","News","news"],["rank","Rankings","compass"],["res","Resources","library"]];
+[$("tabs"),$("tabsM")].forEach(host=>{TABDEFS.forEach(td=>{const b=h("button","tab",null);b.type="button";b.dataset.k=td[0];b.setAttribute("role","tab");b.setAttribute("data-tip","Go to "+td[1]);b.appendChild(icon(td[2],"ic"));b.appendChild(document.createTextNode(td[1]));b.onclick=()=>tab(td[0]);host.appendChild(b)})});
+
+TYPES.forEach(t=>{const b=h("button","chip hard shadow");b.type="button";b.dataset.k=t;if(t!=="All")b.appendChild(icon(CAT_ICON[t]||"compass"));b.appendChild(document.createTextNode(t==="All"?"All categories":t));b.onclick=()=>{st.type=t;st.saved=false;list()};$("types").appendChild(b)});
+const sb=h("button","chip hard shadow");sb.type="button";sb.dataset.k="saved";sb.dataset.s="1";sb.appendChild(icon("star"));sb.appendChild(document.createTextNode("Saved"));sb.onclick=()=>{st.saved=!st.saved;list()};$("types").appendChild(sb);
+
+["All","Protests","Community","Rankings","Scholarships","Hackathons","AI & studies"].forEach(t=>{const b=h("button","chip hard shadow",t);b.type="button";b.onclick=()=>{st.nt=t;document.querySelectorAll("#ntags .chip").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));news()};b.setAttribute("aria-pressed",String(t==="All"));$("ntags").appendChild(b)});
+Object.keys(RK).forEach(k=>{const b=h("button","chip hard shadow",RK[k].n);b.type="button";b.dataset.k=k;b.onclick=()=>{st.rk=k;rank()};$("rtabs").appendChild(b)});
+[["study","Study & courses","library"],["road","Roadmaps","route"],["ai","AI & your studies","sparkle"],["comm","Community","users"]].forEach(rd=>{const b=h("button","btn hard shadow");b.type="button";b.dataset.k=rd[0];b.appendChild(icon(rd[2]));b.appendChild(document.createTextNode(" "+rd[1]));b.onclick=()=>{st.res=rd[0];resources()};$("rsub").appendChild(b)});
+
+["pl","pf","pr","pm","ps"].forEach(i=>$(i).addEventListener("change",list));
+function liveSearch(){st.q=$("q").value.slice(0,80);if(st.tab==="opp")list()}
+function smartSearch(){const v=$("q").value.slice(0,80);st.q=v;nlpApply(v);tab("opp")}
+$("q").addEventListener("input",liveSearch);
+$("qgo").addEventListener("click",smartSearch);
+$("q").addEventListener("keydown",e=>{if(e.key==="Enter")smartSearch()});
+
+$("wprev").addEventListener("click",()=>{wheelStep(-1);wheelAuto()});
+$("wnext").addEventListener("click",()=>{wheelStep(1);wheelAuto()});
+const stage=$("stage");
+stage.addEventListener("pointerenter",stopAuto);stage.addEventListener("pointerleave",()=>{if(st.tab==="home")wheelAuto()});
+stage.setAttribute("tabindex","0");stage.setAttribute("role","group");stage.setAttribute("aria-label","Dashboard highlights, use left and right arrows");
+stage.addEventListener("keydown",e=>{if(e.key==="ArrowLeft"){wheelStep(-1);wheelAuto()}else if(e.key==="ArrowRight"){wheelStep(1);wheelAuto()}});
+(function(){let sx=null;stage.addEventListener("pointerdown",e=>{sx=e.clientX;stopAuto()});
+stage.addEventListener("pointerup",e=>{if(sx===null)return;const dx=e.clientX-sx;if(Math.abs(dx)>40)wheelStep(dx<0?1:-1);sx=null;if(st.tab==="home")wheelAuto()});})();
+
+/* tooltips via delegation */
+const tipEl=h("div","tipbubble");document.body.appendChild(tipEl);
+function showTip(el){const t=el.getAttribute("data-tip");if(!t)return;tipEl.textContent=t;const r=el.getBoundingClientRect();let left=r.left;if(left>window.innerWidth-240)left=window.innerWidth-240;if(left<8)left=8;tipEl.style.left=left+"px";tipEl.style.top=(r.bottom+8)+"px";tipEl.classList.add("show")}
+function hideTip(){tipEl.classList.remove("show")}
+document.addEventListener("pointerover",e=>{const el=e.target.closest("[data-tip]");if(el)showTip(el)});
+document.addEventListener("pointerout",e=>{const el=e.target.closest("[data-tip]");if(el)hideTip()});
+document.addEventListener("focusin",e=>{const el=e.target.closest("[data-tip]");if(el)showTip(el)});
+document.addEventListener("focusout",hideTip);
+
+/* click sound */
+let AC=null,soundOn=ld("nv_sound");if(soundOn===null)soundOn=true;
+function ensureAC(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)()}catch(e){}}return AC}
+function clickSound(){if(!soundOn)return;const ctx=ensureAC();if(!ctx)return;try{
+if(ctx.state==="suspended")ctx.resume();
+const t=ctx.currentTime;
+/* mechanical key/mouse click: a very short noise burst through a highpass filter, like a physical switch strike, plus a tiny lower thock for body */
+const dur=0.035,sr=ctx.sampleRate,n=Math.max(1,Math.floor(sr*dur));
+const buf=ctx.createBuffer(1,n,sr);const data=buf.getChannelData(0);
+for(let i=0;i<n;i++){const env=Math.pow(1-i/n,2.6);data[i]=(Math.random()*2-1)*env}
+const src=ctx.createBufferSource();src.buffer=buf;
+const hp=ctx.createBiquadFilter();hp.type="highpass";hp.frequency.value=1800;
+const g=ctx.createGain();g.gain.setValueAtTime(0.5,t);g.gain.exponentialRampToValueAtTime(0.001,t+dur);
+src.connect(hp);hp.connect(g);g.connect(ctx.destination);src.start(t);src.stop(t+dur);
+const o=ctx.createOscillator(),og=ctx.createGain();o.type="sine";o.frequency.setValueAtTime(140,t);o.frequency.exponentialRampToValueAtTime(90,t+0.02);
+og.gain.setValueAtTime(0.09,t);og.gain.exponentialRampToValueAtTime(0.0001,t+0.028);
+o.connect(og);og.connect(ctx.destination);o.start(t);o.stop(t+0.03);
+}catch(e){}}
+let NB=null,MG=null;
+function master(ctx){if(MG)return MG;const c=ctx.createDynamicsCompressor();c.threshold.value=-16;c.ratio.value=8;const g=ctx.createGain();g.gain.value=1.3;g.connect(c);c.connect(ctx.destination);MG=g;return g}
+function noiseBuf(ctx){if(NB)return NB;const n=ctx.sampleRate*0.12|0;NB=ctx.createBuffer(1,n,ctx.sampleRate);const d=NB.getChannelData(0);for(let i=0;i<n;i++)d[i]=Math.random()*2-1;return NB}
+function burst(ctx,t,dur,ftype,freq,q,gain){const s=ctx.createBufferSource();s.buffer=noiseBuf(ctx);const f=ctx.createBiquadFilter();f.type=ftype;f.frequency.value=freq;f.Q.value=q;const g=ctx.createGain();g.gain.setValueAtTime(gain,t);g.gain.exponentialRampToValueAtTime(0.0008,t+dur);s.connect(f);f.connect(g);g.connect(master(ctx));s.start(t);s.stop(t+dur+0.01)}
+function tone(ctx,t,f0,f1,dur,gain){const o=ctx.createOscillator(),g=ctx.createGain();o.type="sine";o.frequency.setValueAtTime(f0,t);o.frequency.exponentialRampToValueAtTime(f1,t+dur);g.gain.setValueAtTime(gain,t);g.gain.exponentialRampToValueAtTime(0.0005,t+dur);o.connect(g);g.connect(master(ctx));o.start(t);o.stop(t+dur+0.01)}
+function mouseSnd(down){if(!soundOn)return;const ctx=ensureAC();if(!ctx)return;try{if(ctx.state!=="running")ctx.resume();const t=ctx.currentTime;
+if(down){burst(ctx,t,0.018,"highpass",2800,0.8,1);tone(ctx,t,2400,1400,0.014,0.3);tone(ctx,t,240,120,0.035,0.5)}
+else{burst(ctx,t,0.013,"highpass",3800,0.8,0.5);tone(ctx,t,1900,1300,0.01,0.18)}}catch(e){}}
+function keySnd(k){if(!soundOn)return;const ctx=ensureAC();if(!ctx)return;try{if(ctx.state!=="running")ctx.resume();const t=ctx.currentTime,v=0.93+Math.random()*0.14,big=k===" "||k==="Enter"||k==="Backspace";
+burst(ctx,t,0.024,"bandpass",(big?2000:3000)*v,0.9,1);
+burst(ctx,t,0.05,"lowpass",big?700:1000,0.7,0.7);
+tone(ctx,t,(big?150:200)*v,(big?65:90)*v,big?0.09:0.06,0.6);
+burst(ctx,t+(big?0.075:0.055),0.014,"highpass",4200,0.8,0.3)}catch(e){}}
+document.addEventListener("pointerdown",e=>{if(e.pointerType==="mouse"&&e.button!==0)return;mouseSnd(true)},true);
+document.addEventListener("pointerup",()=>mouseSnd(false),true);
+["pointerdown","keydown","touchstart"].forEach(ev=>document.addEventListener(ev,()=>{const c=ensureAC();if(c&&c.state!=="running")c.resume()},{capture:true,passive:true}));
+const NOKEY=new Set(["Shift","Control","Alt","Meta","CapsLock","Tab","Escape"]);
+document.addEventListener("keydown",e=>{const t=e.target;if(!t||!/^(INPUT|TEXTAREA)$/.test(t.tagName)||NOKEY.has(e.key)||e.ctrlKey||e.metaKey)return;keySnd(e.key)},true);
+
+/* custom pointer + soft glow + click sparks */
+(function(){const fine=matchMedia("(pointer:fine)").matches;
+const COLS=["#ff5b45","#ffd23f","#ff3f8e","#00b4d8","#17b978"];let ci=0;
+if(fine){const arrow='<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30"><path d="M5 3l18 9.5-8 2.3-2.6 8.2z" fill="#ff5b45" stroke="#15120e" stroke-width="2.4" stroke-linejoin="round"/></svg>';
+const hand='<svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 34 34"><circle cx="17" cy="17" r="11" fill="#ffd23f" stroke="#15120e" stroke-width="2.6"/><path d="M12 16l4 4 7-8" fill="none" stroke="#15120e" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const u=x=>'url("data:image/svg+xml,'+encodeURIComponent(x)+'")';
+const R=document.documentElement.style;R.setProperty("--cur-a",u(arrow)+" 5 3, auto");R.setProperty("--cur-h",u(hand)+" 17 17, pointer");document.documentElement.classList.add("fx")}
+if(rm)return;
+function spark(x,y){const c=COLS[ci++%COLS.length];for(let i=0;i<8;i++){const p=h("div","sp"),an=i/8*Math.PI*2,d=22+Math.random()*10;p.style.left=x+"px";p.style.top=y+"px";p.style.background=i%2?c:COLS[(ci+2)%COLS.length];p.style.setProperty("--dx",Math.cos(an)*d+"px");p.style.setProperty("--dy",Math.sin(an)*d+"px");document.body.appendChild(p);setTimeout(()=>p.remove(),520)}}
+document.addEventListener("pointerdown",e=>spark(e.clientX,e.clientY),true);
+if(!fine)return;
+const gl=h("div","glow");document.body.appendChild(gl);let tx=innerWidth/2,ty=300,x=tx,y=ty;
+document.addEventListener("pointermove",e=>{tx=e.clientX;ty=e.clientY;gl.style.opacity=1});
+document.addEventListener("pointerleave",()=>gl.style.opacity=0);
+(function loop(){x+=(tx-x)*.12;y+=(ty-y)*.12;gl.style.transform="translate("+x+"px,"+y+"px)";requestAnimationFrame(loop)})()})();
+function updateSndIcon(){const b=$("snd");b.innerHTML="";b.appendChild(icon(soundOn?"volumeOn":"volumeOff"))}
+$("snd").addEventListener("click",()=>{soundOn=!soundOn;sv("nv_sound",soundOn);updateSndIcon()});
+updateSndIcon();
+
+$("homeNewsMore").addEventListener("click",e=>{e.preventDefault();tab("news")});
+$("homeFelMore").addEventListener("click",e=>{e.preventDefault();tab("opp");st.type="Internship";st.saved=false;list()});
+$("cmpToggle").addEventListener("click",()=>{const p=$("cmpPanel");p.hidden=!p.hidden;$("cmpToggle").textContent=p.hidden?"⚖ Compare universities":"⚖ Hide comparison";if(!p.hidden)cmpRender()});
+
+const s0=ld("nv_saved");if(Array.isArray(s0))s0.forEach(i=>{if(D.some(x=>x.id===i))st.saves.add(i)});
+(function(){const hi=document.querySelector("#v-home .hero-in");if(!hi)return;const w=h("div","heroart");[["f1","Scholarship","hero1"],["f2","Hackathon","hero2"],["f3","Uni","hero3"]].forEach(a=>{const f=h("div","fr "+a[0]);f.innerHTML=sceneSVG(a[1],a[2]);w.appendChild(f)});hi.appendChild(w)})();
+tab("home");
+</script>
+
+</body></html>
